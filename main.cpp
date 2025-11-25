@@ -10,6 +10,7 @@ class Cliente{
         char endereco[99];
         int telCliente;
     public:
+        //encapsulamento
         int getCodigoCliente(){return codigoCliente;};
         char *getNomeCliente(){return nomeCliente;};
         char *getEndereco(){return endereco;};
@@ -32,16 +33,28 @@ class Cliente{
             if (a > 0)
                 telCliente = a;
         }
+        //procedimento de cadastro de clientes
+        /*void cadastraCliente(int codCliente, char nomeCliente[99], char end[99], int telCliente){
+            //apenas o basico feito
+            setCodigoCliente(codCliente);
+            setNomeCliente(nomeCliente);
+            setEndereco(end);
+            setTelCliente(telCliente);
+        
+        }*/
+        
 };
+
 
 class Funcionario{
     private:
         int codigoFunc;
         char nomeFunc[99];
         int telFunc;
-        char cargo[50];
+        char cargo[30];
         float salario;
     public:
+        //encapsulamento
         int getCodigoFunc(){return codigoFunc;};
         char *getNomeFunc(){return nomeFunc;};
         char *getCargo(){return cargo;};
@@ -57,7 +70,7 @@ class Funcionario{
             strcpy(nomeFunc, y);
         }
 
-        void setCargo(char z[50]){
+        void setCargo(char z[30]){
             strcpy(cargo, z);
         }
 
@@ -70,6 +83,16 @@ class Funcionario{
             if (b > 0.0)
                 salario = b;
         }
+        //procedimento para cadastro de funcionarios
+        /*void cadastraFunc(int codFunc, char nomeFunc[99], char cargo[30], int telFunc, float salario){
+        //apenas o basico feito
+            setCodigoFunc(codFunc);
+            setNomeFunc(nomeFunc);
+            setCargo(cargo);
+            setTelFunc(telFunc);
+            setSalario(salario);
+        
+        }*/
 };
 
 class Quarto{
@@ -79,6 +102,7 @@ class Quarto{
         float valorDiaria;
         bool status;
     public:
+        //encapsulamento
         int getNumQuarto(){return numQuarto;};
         int getQuantHospedes(){return quantHospedes;};
         float getValorDiaria(){return valorDiaria;};
@@ -102,10 +126,37 @@ class Quarto{
         void setStatus(bool a){
             status = a;
         }
+        //procedimento para cadastro de quartos
+        /*void cadastraQuarto(int num, int quant, float diaria, bool stat){
+        //apenas o basico
+            setNumQuarto(num);
+            setQuantHospedes(quant);
+            setValorDiaria(diaria);
+            setStatus(stat);
+        }*/
 };
 
 /* class Estadia{
-    
+    private:
+        //código da  estadia, data de  entrada,  data de saída, quantidade de diárias,  código 
+        //do cliente, número do quarto 
+        int codigoEstadia;
+        int dataEntrada;
+        int dataSaida;
+        int numDiarias;
+        //puxar codigo cliente e num quarto das classes cliente e quarto;
+    public:
+        //encapsulamento
+        int getCodigoEstadia(){return codigoEstadia;};
+        int getDataEntrda(){return dataEntrada;};
+        int getDataSaida(){return dataSaida;};
+        int getNumDiarias(){return numDiarias;};
+
+        void setcodigoEstadia(int a){}
+        void setdataEntrada(int b){}
+        void setdataSaida(int c){}
+        void setnumDiarias(int d){}
+
 };*/ 
 int main() {
     cout << "Hello World!" << endl;
