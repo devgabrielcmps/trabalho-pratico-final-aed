@@ -1,6 +1,8 @@
 fazer void cadastro em clientes, funcionarios e quartos
+    *usar malloc e realloc nos procedimentos para caso precise adicionar mais clientes ou funcionarios ou quartos.
 
-testar as classes e cadastros.
 
 
-comecei a classe estadia, nao terminada
+
+testar os cadastros.
+
