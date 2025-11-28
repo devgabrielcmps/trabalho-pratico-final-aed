@@ -450,6 +450,7 @@ class Estadia{
         //puxando codigo cliente e num quarto das classes cliente e quarto;
         int codigoCliente;
         int numQuarto;
+        char nomeCliente[99];
     public:
         //encapsulamento
         int getCodigoEstadia(){return codigoEstadia;};
@@ -458,6 +459,7 @@ class Estadia{
         int getNumDiarias(){return numDiarias;};
         int getCodigoCliente(){return codigoCliente;};
         int getNumQuarto(){return numQuarto;};
+        char *getNomeCliente(){return nomeCliente;};
 
         void setcodigoEstadia(int a){
             if (a > 0)
@@ -482,6 +484,9 @@ class Estadia{
         void setnumQuarto(int f){
             if (f > 0)
                 numQuarto = f;
+        }
+        void  setnomeCliente(char g[99]){
+            strcpy(nomeCliente, g);
         }
 
     void cadastrarEstadia(Estadia *estadia, int numEstadias, int codEstadia, int dataEntrada, int dataSaida, int numDiarias, int codCliente, int numQuarto, Cliente *clientes, int numClientes){
@@ -508,18 +513,64 @@ class Estadia{
         }
     }
 };
+
+void BackupdeDados(){
+    //implementar backup de dados
+}
+
+void RestaurarDados(){
+    //implementar restaurar dados
+}
+
 //procedimento para mostrar as estadias cadastradas de um cliente especifico
-/*void mostraEstadias(Estadia *estadias, int numEstadias){
-    for (int i = 0; i < numEstadias; i++){
-        cout << "Codigo da estadia: " << estadias[i].getCodigoEstadia() << endl;
-        cout << "Data de entrada: " << estadias[i].getDataEntrda() << endl;
-        cout << "Data de saida: " << estadias[i].getDataSaida() << endl;
-        cout << "Numero de diarias: " << estadias[i].getNumDiarias() << endl;
-        cout << "Codigo do cliente: " << estadias[i].getCodigoCliente() << endl;
-        cout << "Numero do quarto: " << estadias[i].getNumQuarto() << endl;
-        cout << "------------------------" << endl;
+void mostraEstadias(Estadia *estadias, int numEstadias){
+    int opcMostrar, codigoCliente;
+    char nomeClienteBusca[99];
+    cout << "Escolha uma das opcoes para mostrar as estadias:" << endl;
+    cout << "1 : Mostrar estadias por codigo do cliente." << endl;
+    cout << "2 : Mostrar estadias por nome do cliente." << endl;   
+    cin >> opcMostrar;
+    switch (opcMostrar){
+        case 1:{
+            cout << "Digite o codigo do cliente: ";
+            cin >> codigoCliente;
+            for (int i = 0; i < numEstadias; i++){
+                if (estadias[i].getCodigoCliente() == codigoCliente){
+                    cout << "Estadia encontrada!" << endl;
+                    cout << "Codigo da estadia: " << estadias[i].getCodigoEstadia() << endl;
+                    cout << "Data de entrada: " << estadias[i].getDataEntrda() << endl;
+                    cout << "Data de saida: " << estadias[i].getDataSaida() << endl;
+                    cout << "Numero de diarias: " << estadias[i].getNumDiarias() << endl;
+                    cout << "Codigo do cliente: " << estadias[i].getCodigoCliente() << endl;
+                    cout << "Numero do quarto: " << estadias[i].getNumQuarto() << endl;
+                }
+            }
+            break;
+        }
+        case 2:{
+            cout << "Digite o nome do cliente: ";
+            scanf(" %[^\n]", nomeClienteBusca);
+            for (int i = 0; i < numEstadias; i++){
+                if (strcmp(estadias[i].getNomeCliente(), nomeClienteBusca) == 0){
+                    cout << "Estadia encontrada!" << endl;
+                    cout << "Codigo da estadia: " << estadias[i].getCodigoEstadia() << endl;
+                    cout << "Data de entrada: " << estadias[i].getDataEntrda() << endl;
+                    cout << "Data de saida: " << estadias[i].getDataSaida() << endl;
+                    cout << "Numero de diarias: " << estadias[i].getNumDiarias() << endl;
+                    cout << "Codigo do cliente: " << estadias[i].getCodigoCliente() << endl;
+                    cout << "Numero do quarto: " << estadias[i].getNumQuarto() << endl;
+                }
+            }
+            break;
+        }
+        default:
+            cout << "Opcao invalida. Nenhum dado foi mostrado." << endl;
+        
     }
-}*/
+}
+    void baixaEstadia(){
+        //implementar baixa de estadia
+    }
 
 int main() {
     Cliente *clientes = NULL;
@@ -672,6 +723,7 @@ int main() {
             }
             case 4:
                 //cadastrar estadia
+                mostraEstadias(estadias, numEstadias);
                 break;
             case 5:
                 //dar baixa em estadia
