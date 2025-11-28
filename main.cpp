@@ -76,7 +76,6 @@ class Cliente{
         
 };
 
-
 class Funcionario{
     private:
         int codigoFunc;
@@ -152,28 +151,176 @@ class Funcionario{
             }            
         }
 };
-void deletaFuncionario(){
-    //fazer função para deletar funcionario por codigo
+
+void deletaFuncionario(Funcionario *func, int &numFuncs, int codigofunc){
+    int index = -1;
+    for (int i = 0; i < numFuncs; i++){
+        if (func[i].getCodigoFunc() == codigofunc){ //move todos os elementos uma posiçao para tras para deletar o funcionario
+            index = i;
+            break;
+        }
+    }
+    if (index != -1){
+        for (int j = index; j < numFuncs - 1; j++){
+            func[j] = func[j + 1];
+        }
+        --numFuncs;
+        cout << "Funcionario deletado com sucesso!" << endl;
+    }
+    else{
+        cout << "Funcionario nao encontrado." << endl;
+    }
 }
 
-void deletaCliente(){
-    //fazer função para deletar cliente por codigo
+void deletaCliente(Cliente *cliente, int &numClientes, int codigoCliente){
+    int index = -1;
+    for (int i = 0; i < numClientes; i++){
+        if (cliente[i].getCodigoCliente() == codigoCliente){
+            index = i;
+            break;
+        }
+    }
+    if (index != -1){
+        for (int j = index; j < numClientes - 1; j++){ //move todos os elementos uma posiçao para tras para deletar o cliente
+            cliente[j] = cliente[j + 1];
+        }
+        --numClientes;
+        cout << "Cliente deletado com sucesso!" << endl;
+    }
+    else{
+        cout << "Cliente nao encontrado." << endl;
+    }
+}
+    
+void editaFuncionario(Funcionario *func, int numFuncs, int codigoFunc){
+    int opcEditar;
+    for (int i = 0; i < numFuncs; i++){
+        if (func[i].getCodigoFunc() == codigoFunc){
+            cout << "O que deseja editar?" << endl;
+            cout << "1 : Nome." << endl;
+            cout << "2 : Cargo." << endl;
+            cout << "3 : Telefone." << endl;
+            cout << "4 : Salario." << endl;
+            cin >> opcEditar;
+            switch (opcEditar){
+                case 1:{
+                    char novoNome[99];
+                    cout << "Digite o novo nome: ";
+                    scanf(" %[^\n]", novoNome);
+                    func[i].setNomeFunc(novoNome);
+                    cout << "Nome atualizado com sucesso!" << endl;
+                    break;
+                }
+                case 2:{
+                    char novoCargo[30];
+                    cout << "Digite o novo cargo: ";
+                    scanf(" %[^\n]", novoCargo);
+                    func[i].setCargo(novoCargo);
+                    cout << "Cargo atualizado com sucesso!" << endl;
+                    break;
+                }
+                case 3:{
+                    int novoTel;
+                    cout << "Digite o novo telefone: ";
+                    cin >> novoTel;
+                    func[i].setTelFunc(novoTel);
+                    cout << "Telefone atualizado com sucesso!" << endl;
+                    break;
+                }
+                case 4:{
+                    float novoSalario;
+                    cout << "Digite o novo salario: ";
+                    cin >> novoSalario;
+                    func[i].setSalario(novoSalario);
+                    cout << "Salario atualizado com sucesso!" << endl;
+                    break;
+                }
+                default:
+                    cout << "Opcao invalida. Nenhum dado foi alterado." << endl;
+            }
+        }
+        else {
+            cout << "Funcionario nao encontrado." << endl;
+        }
+    }
 }
 
-void editaFuncionario(){
-    //fazer função para editar funcionario por codigo
+void editaCliente(Cliente *cliente, int numClientes, int codigoCliente){
+    for (int i = 0; i < numClientes; i++){
+        if (cliente[i].getCodigoCliente() == codigoCliente){
+            int opcEditar;
+            cout << "O que deseja editar?" << endl;
+            cout << "1 : Nome." << endl;
+            cout << "2 : Endereco." << endl;
+            cout << "3 : Telefone." << endl;
+            cin >> opcEditar;
+            switch (opcEditar){
+                case 1:{
+                    char novoNome[99];
+                    cout << "Digite o novo nome: ";
+                    scanf(" %[^\n]", novoNome);
+                    cliente[i].setNomeCliente(novoNome);
+                    cout << "Nome atualizado com sucesso!" << endl;
+                    break;
+                }
+                case 2:{
+                    char novoEndereco[99];
+                    cout << "Digite o novo endereco: ";
+                    scanf(" %[^\n]", novoEndereco);
+                    cliente[i].setEndereco(novoEndereco);
+                    cout << "Endereco atualizado com sucesso!" << endl;
+                    break;
+                }
+                case 3:{
+                    int novoTel;
+                    cout << "Digite o novo telefone: ";
+                    cin >> novoTel;
+                    cliente[i].setTelCliente(novoTel);
+                    cout << "Telefone atualizado com sucesso!" << endl;
+                    break;
+                }
+                default:
+                    cout << "Opcao invalida. Nenhum dado foi alterado." << endl;
+            }
+        }
+        else {
+            cout << "Cliente nao encontrado." << endl;
+        }
+    }
 }
 
-void editaCliente(){
-    //fazer função para editar cliente por codigo
+void procuraFuncionario(Funcionario *func, int numFuncs, int codigoFunc){
+    for (int i = 0; i < numFuncs; i++){
+        if (func[i].getCodigoFunc() == codigoFunc){
+            cout << "Funcionario encontrado!" << endl;
+            cout << "Codigo: " << func[i].getCodigoFunc() << endl;
+            cout << "Nome: " << func[i].getNomeFunc() << endl;
+            cout << "Cargo: " << func[i].getCargo() << endl;
+            cout << "Telefone: " << func[i].getTelFunc() << endl;
+            cout << "Salario: " << func[i].getSalario() << endl;
+            return;
+        }
+        else{
+            cout << "Funcionario nao encontrado." << endl;
+        }
+    }
 }
 
-void procuraFuncionario(){
-    //fazer função para procurar funcionario por codigo
-}
-
-void procuraCliente(){
-    //fazer função para procurar cliente por codigo
+void procuraCliente(Cliente *cliente, int numClientes, int codigoCliente){
+    for (int i = 0; i < numClientes; i++){
+        if (cliente[i].getCodigoCliente() == codigoCliente){
+            cout << "Cliente encontrado!" << endl;
+            cout << "Codigo: " << cliente[i].getCodigoCliente() << endl;
+            cout << "Nome: " << cliente[i].getNomeCliente() << endl;
+            cout << "Endereco: " << cliente[i].getEndereco() << endl;
+            cout << "Telefone: " << cliente[i].getTelCliente() << endl;
+            cout << "Quarto numero: " << cliente[i].getCodigoCliente() << endl;
+            return;
+        }
+        else {
+            cout << "Cliente nao encontrado." << endl;
+        }
+    }
 }
 
 class Quarto{
@@ -254,6 +401,37 @@ class Quarto{
         }
 };
 
+//procedimento para verificar se o quarto pertence ao cliente
+//caso precise, pode ser usado para verificar se o cliente pode fazer check-out ou não
+//usar na classe estadia
+void verificaQuartoPertenceCliente(Quarto *quarto, int numQuartos, int numeroQuarto, int codigoCliente){
+    for (int i = 0; i < numQuartos; i++){
+        if (quarto[i].getNumQuarto() == numeroQuarto){
+            if (quarto[i].getCodigoCliente() == codigoCliente){
+                cout << "O quarto pertence ao cliente." << endl;
+            }
+            else{
+                cout << "O quarto nao pertence ao cliente." << endl;
+            }
+            return;
+        }
+    }
+    cout << "Quarto nao encontrado." << endl;
+}
+
+//versao booleana da funcao acima
+bool verificaQuartoPertenceClienteBool(Quarto *quarto, int numQuartos, int numeroQuarto, int codigoCliente){
+    for (int i = 0; i < numQuartos; i++){
+        if (quarto[i].getNumQuarto() == numeroQuarto){
+            if (quarto[i].getCodigoCliente() == codigoCliente){
+                return true;
+            }
+        }
+        return false;
+    }
+}
+//procedimento para verificar se o cliente existe
+//caso precise, pode ser usado para verificar se o cliente pode fazer check-in ou não
 bool verificaCliente(Cliente *cliente, int numCLientes, int codigoCliente){
     for (int i = 0; i < numCLientes; i++){
         if (cliente[i].getCodigoCliente() == codigoCliente){
@@ -263,36 +441,96 @@ bool verificaCliente(Cliente *cliente, int numCLientes, int codigoCliente){
     return false;
 }
 
-/* class Estadia{
+class Estadia{
     private:
-        //código da  estadia, data de  entrada,  data de saída, quantidade de diárias, 
-        //código do cliente, número do quarto 
         int codigoEstadia;
         int dataEntrada;
         int dataSaida;
         int numDiarias;
-        //puxar codigo cliente e num quarto das classes cliente e quarto;
+        //puxando codigo cliente e num quarto das classes cliente e quarto;
+        int codigoCliente;
+        int numQuarto;
     public:
         //encapsulamento
         int getCodigoEstadia(){return codigoEstadia;};
         int getDataEntrda(){return dataEntrada;};
         int getDataSaida(){return dataSaida;};
         int getNumDiarias(){return numDiarias;};
+        int getCodigoCliente(){return codigoCliente;};
+        int getNumQuarto(){return numQuarto;};
 
-        void setcodigoEstadia(int a){}
-        void setdataEntrada(int b){}
-        void setdataSaida(int c){}
-        void setnumDiarias(int d){}
+        void setcodigoEstadia(int a){
+            if (a > 0)
+                codigoEstadia = a;
+        }
+        void setdataEntrada(int b){
+            if (b > 0)
+                dataEntrada = b;
+        }
+        void setdataSaida(int c){
+            if (c > 0)
+                dataSaida = c;
+        }
+        void setnumDiarias(int d){
+            if (d > 0)
+                numDiarias = d;
+        }
+        void setcodigoCliente(int e){
+            if (e > 0)
+                codigoCliente = e;
+        }
+        void setnumQuarto(int f){
+            if (f > 0)
+                numQuarto = f;
+        }
 
-};*/ 
+    void cadastrarEstadia(Estadia *estadia, int numEstadias, int codEstadia, int dataEntrada, int dataSaida, int numDiarias, int codCliente, int numQuarto, Cliente *clientes, int numClientes){
+        if (verificaCliente(clientes, numClientes, codCliente) == false){
+            cout << "Codigo de cliente nao existe. Cadastro de estadia nao realizado." << endl;
+            return;
+        }
+        else if(dataSaida <= dataEntrada){
+            cout << "Data de saida invalida. Cadastro de estadia nao realizado." << endl;
+            return;
+        }
+        else  if (!verificaQuartoPertenceClienteBool(NULL, 0, numQuarto, codCliente)){
+            cout << "Quarto nao pertence ao cliente. Cadastro de estadia nao realizado." << endl;
+            return;
+        }
+        else{
+            setcodigoEstadia(codEstadia);
+            setdataEntrada(dataEntrada);
+            setdataSaida(dataSaida);
+            setnumDiarias(numDiarias);
+            setcodigoCliente(codCliente);
+            setnumQuarto(numQuarto);
+            cout << "Estadia cadastrada com sucesso!" << endl;
+        }
+    }
+};
+//procedimento para mostrar as estadias cadastradas de um cliente especifico
+/*void mostraEstadias(Estadia *estadias, int numEstadias){
+    for (int i = 0; i < numEstadias; i++){
+        cout << "Codigo da estadia: " << estadias[i].getCodigoEstadia() << endl;
+        cout << "Data de entrada: " << estadias[i].getDataEntrda() << endl;
+        cout << "Data de saida: " << estadias[i].getDataSaida() << endl;
+        cout << "Numero de diarias: " << estadias[i].getNumDiarias() << endl;
+        cout << "Codigo do cliente: " << estadias[i].getCodigoCliente() << endl;
+        cout << "Numero do quarto: " << estadias[i].getNumQuarto() << endl;
+        cout << "------------------------" << endl;
+    }
+}*/
+
 int main() {
     Cliente *clientes = NULL;
     Funcionario *funcionarios = NULL;
     Quarto *quartos = NULL;
+    Estadia *estadias = NULL;
 
     int numClientes = 0, capClientes = 0;
     int numFuncionarios = 0, capFuncionarios = 0;
     int numQuartos = 0, capQuartos = 0;
+    int numEstadias = 0, capEstadias = 0;
 
     int opc;
     do{
@@ -308,9 +546,6 @@ int main() {
         cout << "9 : Restaurar dados" << endl;
         
         cin >> opc;
-        if (opc < 1 || opc > 9){
-            cout << "opcao invalida, tente novamente." << endl;
-        }
 
         switch (opc){
             case 1: {
@@ -346,7 +581,7 @@ int main() {
                     int codClienteEditar;
                     cout << "Digite o codigo do cliente a ser editado: ";
                     cin >> codClienteEditar;
-                    // fazer funcao para ediçao
+                    editaCliente(clientes, numClientes, codClienteEditar);
                     break;
                 }
                 else {
@@ -354,7 +589,7 @@ int main() {
                     int codClienteRemover;
                     cout << "Digite o codigo do cliente a ser removido: ";
                     cin >> codClienteRemover;
-                    // fazer funcao para remoçao
+                    deletaCliente(clientes, numClientes, codClienteRemover);
                     break;
                 }
                 break;
@@ -396,7 +631,7 @@ int main() {
                     int codFuncEditar;
                     cout << "Digite o codigo do funcionario a ser editado: ";
                     cin >> codFuncEditar;
-                    //fazer funcao para ediçao
+                    editaFuncionario(funcionarios, numFuncionarios, codFuncEditar);
                     break;
                   }
                 else {
@@ -404,7 +639,7 @@ int main() {
                     int codFuncRemover;
                     cout << "Digite o codigo do funcionario a ser removido: ";
                     cin >> codFuncRemover;
-                    //fazer funcao para remoçao
+                    deletaFuncionario(funcionarios, numFuncionarios, codFuncRemover);
                     break;
                 }
                 break;
@@ -441,17 +676,50 @@ int main() {
             case 5:
                 //dar baixa em estadia
                 break;
-            case 6:
+            case 6:{
                 //mostrar estadias
+                int codClienteEstadia;
+                cout << "Digite o codigo do cliente para ver suas estadias: ";
+                cin >> codClienteEstadia;
+
                 break;
-            case 7:
+            }
+            case 7:{
                 //pesquisar cliente/funcionario
+                int opcPesquisar;
+                cout << "1 : Pesquisar cliente." << endl;
+                cout << "2 : Pesquisar funcionario." << endl;
+                cin >> opcPesquisar;
+                if (opcPesquisar < 1 || opcPesquisar > 2){
+                    cout << "opcao invalida, retornando ao menu principal." << endl;
+                    break;
+                }
+                if (opcPesquisar == 1){
+                    //pesquisar cliente
+                    int codClientePesquisar;
+                    cout << "Digite o codigo do cliente a ser pesquisado: ";
+                    cin >> codClientePesquisar;
+                    procuraCliente(clientes, numClientes, codClientePesquisar);
+                    break;
+                }
+                else {
+                    //pesquisar funcionario
+                    int codFuncPesquisar;
+                    cout << "Digite o codigo do funcionario a ser pesquisado: ";
+                    cin >> codFuncPesquisar;
+                    procuraFuncionario(funcionarios, numFuncionarios, codFuncPesquisar);
+                    break;
+                }
                 break;
+            }
             case 8:
                 //backup de dados
                 break;
             case 9:
                 //restaurar dados
+                break;
+            default:
+                cout << "opcao invalida, fechando programa....." << endl;
                 break;
         }
     }while(opc >=1 && opc <= 9);
