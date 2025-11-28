@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string.h>
+#include <cstdlib>
+#include <cstdio>
 
 using namespace std;
 
@@ -58,7 +60,6 @@ class Cliente{
 
         //procedimento de cadastro de clientes
         void cadastraCliente(Cliente *cliente, int numDeClientes, int codCliente, char nomeCliente[99], char end[99], int telCliente){
-            //apenas o basico feito
             if (codigoClienteJaExiste(codCliente, cliente, numDeClientes) == true){
                 cout << "Codigo de cliente ja existe. Cadastro nao realizado." << endl;
                 return;
@@ -126,16 +127,54 @@ class Funcionario{
             num++;
         }
 
+        bool codigoFuncJaExiste(int a, Funcionario *funcionarios, int numFuncionarios){
+            for (int i = 0; i < numFuncionarios; i++){
+                if (funcionarios[i].getCodigoFunc() == a){
+                    return true;
+                }
+            }
+            return false;
+        }
+
         //procedimento para cadastro de funcionarios
-        void cadastraFunc(int codFunc, char nomeFunc[99], char cargo[30], int telFunc, float salario){
-            //apenas o basico feito
-            setCodigoFunc(codFunc);
-            setNomeFunc(nomeFunc);
-            setCargo(cargo);
-            setTelFunc(telFunc);
-            setSalario(salario);
+        void cadastraFunc(Funcionario *funcionarios, int numFuncionarios, int codFunc, char nomeFunc[99], char cargo[30], int telFunc, float salario){
+            if (codigoFuncJaExiste(codFunc, funcionarios, numFuncionarios) == true){
+                cout << "Codigo de funcionario ja existe. Cadastro nao realizado." << endl;
+                return;
+            }
+            else{
+                setCodigoFunc(codFunc);
+                setNomeFunc(nomeFunc);
+                setCargo(cargo);
+                setTelFunc(telFunc);
+                setSalario(salario);
+                cout << "Funcionario cadastrado com sucesso!" << endl;
+            }            
         }
 };
+void deletaFuncionario(){
+    //fazer função para deletar funcionario por codigo
+}
+
+void deletaCliente(){
+    //fazer função para deletar cliente por codigo
+}
+
+void editaFuncionario(){
+    //fazer função para editar funcionario por codigo
+}
+
+void editaCliente(){
+    //fazer função para editar cliente por codigo
+}
+
+void procuraFuncionario(){
+    //fazer função para procurar funcionario por codigo
+}
+
+void procuraCliente(){
+    //fazer função para procurar cliente por codigo
+}
 
 class Quarto{
     private:
@@ -143,12 +182,14 @@ class Quarto{
         int quantHospedes;
         float valorDiaria;
         bool status;
+        int codigoCliente;
     public:
         //encapsulamento
         int getNumQuarto(){return numQuarto;};
         int getQuantHospedes(){return quantHospedes;};
         float getValorDiaria(){return valorDiaria;};
         bool getStatus(){return status;};
+        int getCodigoCliente(){return codigoCliente;};
 
         void setNumQuarto(int x){
             if (x > 0)
@@ -169,6 +210,11 @@ class Quarto{
             status = a;
         }
 
+        void setCodigoCliente(int b){
+            if (b > 0)
+                codigoCliente = b;
+        }
+
 
         //procedimento para adicionar quartos, caso precise
         //passa por referência o vetor de quartos, o número atual de quartos cadastrados,  
@@ -182,7 +228,40 @@ class Quarto{
             p[num] = novoQuarto;
             num++;
         }
+
+        bool numQuartoJaExiste(int a, Quarto *quartos, int numQuartos){
+            for (int i = 0; i < numQuartos; i++){
+                if (quartos[i].getNumQuarto() == a){
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        void cadastraQuarto(Quarto *quartos, int numQuartos, int numeroQuarto, int quantHospedes, float valorDiaria, bool status, int codigoCliente){
+            if (numQuartoJaExiste(numeroQuarto, quartos, numQuartos) == true){
+                cout << "Quarto ja ocupado! Cadastro nao realizado." << endl;
+                return;
+            }
+            else{
+                setNumQuarto(numeroQuarto);
+                setQuantHospedes(quantHospedes);
+                setValorDiaria(valorDiaria);
+                setStatus(status);
+                setCodigoCliente(codigoCliente);
+                cout << "Quarto cadastrado com sucesso!" << endl;
+            }
+        }
 };
+
+bool verificaCliente(Cliente *cliente, int numCLientes, int codigoCliente){
+    for (int i = 0; i < numCLientes; i++){
+        if (cliente[i].getCodigoCliente() == codigoCliente){
+            return true;
+        }
+    }
+    return false;
+}
 
 /* class Estadia{
     private:
@@ -215,21 +294,11 @@ int main() {
     int numFuncionarios = 0, capFuncionarios = 0;
     int numQuartos = 0, capQuartos = 0;
 
-    //possivel função para verificar se o código do cliente já existe
-    /*bool codigoClienteJaExiste(int a, int numClientes){
-        for (int i = 0; i < numClientes; i++){
-            if (a == Cliente[i].getCodigoCliente()){
-                return true;
-            }
-        }
-        return false;
-    }*/
-
     int opc;
     do{
         cout << "escolha uma das opcoes :" << endl;
-        cout << "1 : Cadastro de clientes." << endl;
-        cout << "2 : Cadastro de funcionarios." << endl;
+        cout << "1 : Opcoes de clientes." << endl;
+        cout << "2 : Opcoes de funcionarios." << endl;
         cout << "3 : Cadastro de quarto." << endl;
         cout << "4 : Cadastro de estadia." << endl;
         cout << "5 : Dar baixa em uma estadia." << endl;
@@ -244,15 +313,128 @@ int main() {
         }
 
         switch (opc){
-            case 1:
-                //cadastrar cliente
+            case 1: {
+                // opcoes de clientes
+                int opc2;
+                cout << "1 : Cadastrar cliente." << endl;
+                cout << "2 : Editar cliente." << endl;
+                cout << "3 : Remover cliente." << endl;
+                cin >> opc2;
+                if (opc2 < 1 || opc2 > 3){
+                    cout << "opcao invalida, retornando ao menu principal." << endl;
+                    break;
+                }
+                if (opc2 == 1){
+                    // cadastrar cliente
+                    int codCliente, telCliente;
+                    char nomeCliente[99], end[99];
+                    cout << "Digite o codigo do cliente: ";
+                    cin >> codCliente;
+                    cout << "Digite o nome do cliente: ";
+                    scanf(" %[^\n]", nomeCliente);   
+                    cout << "Digite o endereco do cliente: ";
+                    scanf(" %[^\n]", end);         
+                    cout << "Digite o telefone do cliente: ";
+                    cin >> telCliente;
+                    Cliente novoCliente;
+                    novoCliente.cadastraCliente(clientes, numClientes, codCliente, nomeCliente, end, telCliente);
+                    novoCliente.adicionaCliente(&clientes, numClientes, capClientes, novoCliente);
+                    break;
+                }
+                else if (opc2 == 2){
+                    // editar cliente
+                    int codClienteEditar;
+                    cout << "Digite o codigo do cliente a ser editado: ";
+                    cin >> codClienteEditar;
+                    // fazer funcao para ediçao
+                    break;
+                }
+                else {
+                    // remover cliente
+                    int codClienteRemover;
+                    cout << "Digite o codigo do cliente a ser removido: ";
+                    cin >> codClienteRemover;
+                    // fazer funcao para remoçao
+                    break;
+                }
                 break;
-            case 2:
-                //cadastrar funcionario
+            }
+            case 2:{
+                //opcoes de funcionario
+                int opcFunc;
+                cout << "1 : Cadastrar funcionario." << endl;
+                cout << "2 : Editar funcionario." << endl;
+                cout << "3 : Remover funcionario." << endl;
+                cin >> opcFunc;
+                if (opcFunc < 1 || opcFunc > 3){
+                    cout << "opcao invalida, retornando ao menu principal." << endl;
+                    break;
+                }
+                if (opcFunc == 1){
+                    //cadastrar funcionario
+                    int codFunc, telFunc;
+                    char nomeFunc[99], cargo[30];
+                    float salario;
+                    cout << "Digite o codigo do funcionario: ";
+                    cin >> codFunc;
+                    cout << "Digite o nome do funcionario: ";
+                    scanf(" %[^\n]", &nomeFunc);
+                    cout << "Digite o cargo do funcionario: ";
+                    scanf(" %[^\n]", &cargo);
+                    cout << "Digite o telefone do funcionario: ";
+                    cin >> telFunc;
+                    cout << "Digite o salario do funcionario: ";
+                    cin >> salario;
+                    Funcionario novoFunc;
+                    novoFunc.cadastraFunc(&novoFunc, numFuncionarios, codFunc, nomeFunc, cargo, telFunc, salario);
+                    novoFunc.adicionaFuncionario(&funcionarios, numFuncionarios, capFuncionarios, novoFunc);
+                    break;
+                }
+                
+                else if (opcFunc == 2){                        
+                    //editar funcionario
+                    int codFuncEditar;
+                    cout << "Digite o codigo do funcionario a ser editado: ";
+                    cin >> codFuncEditar;
+                    //fazer funcao para ediçao
+                    break;
+                  }
+                else {
+                    //remover funcionario
+                    int codFuncRemover;
+                    cout << "Digite o codigo do funcionario a ser removido: ";
+                    cin >> codFuncRemover;
+                    //fazer funcao para remoçao
+                    break;
+                }
                 break;
-            case 3:
-                //cadastrar quarto
+            }
+            case 3:{
+                //cadastro de quarto
+                int numeroQuarto, quantHospedes, codigoClienteQuarto;
+                float valorDiaria;
+                bool status;
+                cout << "Digite o numero do quarto: ";
+                cin >> numeroQuarto;
+                cout << "Digite a quantidade de hospedes: ";
+                cin >> quantHospedes;
+                cout << "Digite o valor da diaria: ";
+                cin >> valorDiaria;
+                cout << "Digite o status do quarto (1 para ocupado, 0 para livre): ";
+                cin >> status;
+                cout << "Digite o codigo do cliente que ira ocupar o quarto: ";
+                cin >> codigoClienteQuarto;
+                //verifica se o codigo do cliente existe
+                if (!verificaCliente(clientes, numClientes, codigoClienteQuarto)){
+                    cout << "Codigo de cliente nao existe. Cadastro de quarto nao realizado." << endl;
+                    break;
+                }
+
+                Quarto novoQuarto;
+                novoQuarto.cadastraQuarto(quartos, numQuartos, numeroQuarto, quantHospedes, valorDiaria, status, codigoClienteQuarto);
+                novoQuarto.adicionaQuarto(&quartos, numQuartos, capQuartos, novoQuarto);
                 break;
+            }
             case 4:
                 //cadastrar estadia
                 break;

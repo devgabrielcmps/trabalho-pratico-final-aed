@@ -1,8 +1,9 @@
 fazer void cadastro em clientes, funcionarios e quartos
-    *usar malloc e realloc nos procedimentos para caso precise adicionar mais clientes ou funcionarios ou quartos.
-
-
+    *usar malloc e realloc nos procedimentos para caso precise adicionar mais clientes ou funcionarios ou quartos. FUNCIONANDO
+    *fazer funcao para deletar e editar clientes, funcionarios, e quartos
 
 
 testar os cadastros.
+    *testar cadastros cliente e funcionarios FUNCIONANDO
+    *testar editar e deletar clientes e funcionarios
 
