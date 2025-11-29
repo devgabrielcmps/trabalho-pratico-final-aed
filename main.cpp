@@ -239,10 +239,8 @@ void editaFuncionario(Funcionario *func, int numFuncs, int codigoFunc){
                     cout << "Opcao invalida. Nenhum dado foi alterado." << endl;
             }
         }
-        else {
-            cout << "Funcionario nao encontrado." << endl;
-        }
     }
+    cout << "Funcionario nao encontrado." << endl;
 }
 
 void editaCliente(Cliente *cliente, int numClientes, int codigoCliente){
@@ -283,10 +281,8 @@ void editaCliente(Cliente *cliente, int numClientes, int codigoCliente){
                     cout << "Opcao invalida. Nenhum dado foi alterado." << endl;
             }
         }
-        else {
-            cout << "Cliente nao encontrado." << endl;
-        }
     }
+    cout << "Cliente nao encontrado." << endl;
 }
 
 void procuraFuncionario(Funcionario *func, int numFuncs, int codigoFunc){
@@ -300,10 +296,8 @@ void procuraFuncionario(Funcionario *func, int numFuncs, int codigoFunc){
             cout << "Salario: " << func[i].getSalario() << endl;
             return;
         }
-        else{
-            cout << "Funcionario nao encontrado." << endl;
-        }
     }
+    cout << "Funcionario nao encontrado." << endl;
 }
 
 void procuraCliente(Cliente *cliente, int numClientes, int codigoCliente){
@@ -317,10 +311,8 @@ void procuraCliente(Cliente *cliente, int numClientes, int codigoCliente){
             cout << "Quarto numero: " << cliente[i].getCodigoCliente() << endl;
             return;
         }
-        else {
-            cout << "Cliente nao encontrado." << endl;
-        }
     }
+    cout << "Cliente nao encontrado." << endl;
 }
 
 class Quarto{
@@ -422,13 +414,12 @@ void verificaQuartoPertenceCliente(Quarto *quarto, int numQuartos, int numeroQua
 //versao booleana da funcao acima
 bool verificaQuartoPertenceClienteBool(Quarto *quarto, int numQuartos, int numeroQuarto, int codigoCliente){
     for (int i = 0; i < numQuartos; i++){
-        if (quarto[i].getNumQuarto() == numeroQuarto){
-            if (quarto[i].getCodigoCliente() == codigoCliente){
-                return true;
-            }
+        if (quarto[i].getNumQuarto() == numeroQuarto &&
+            quarto[i].getCodigoCliente() == codigoCliente){
+            return true;
         }
-        return false;
     }
+    return false;
 }
 //procedimento para verificar se o cliente existe
 //caso precise, pode ser usado para verificar se o cliente pode fazer check-in ou não
@@ -514,10 +505,33 @@ class Estadia{
     }
 };
 
-void BackupdeDados(){
+void BackupdeDados(Cliente *cliente, int numClientes, Funcionario *funcionario, int numFuncs ,Quarto *quarto, int numQuartos, Estadia *estadia, int numEstadias){
     //implementar backup de dados
-}
+    FILE *backup;
+    backup = fopen("backup.bin", "wb");
+    if (backup == NULL){
+        cout << "Erro ao criar arquivo de backup." << endl;
+        return;
+    }
+    for (int i = 0; i < numClientes; i++){
+        fwrite(&cliente[i], sizeof(Cliente), 1, backup);
+    }
 
+    for (int i = 0; i < numFuncs; i++){
+        fwrite(&funcionario[i], sizeof(Funcionario), 1, backup);
+    }
+
+    for (int i = 0; i < numQuartos; i++){
+        fwrite(&quarto[i], sizeof(Quarto), 1, backup);
+    }
+
+    for (int i = 0; i < numEstadias; i++){
+        fwrite(&estadia[i], sizeof(Estadia), 1, backup);
+    }
+
+    fclose(backup);
+    cout << "Backup realizado com sucesso!" << endl;
+}
 void RestaurarDados(){
     //implementar restaurar dados
 }
@@ -664,15 +678,15 @@ int main() {
                     cout << "Digite o codigo do funcionario: ";
                     cin >> codFunc;
                     cout << "Digite o nome do funcionario: ";
-                    scanf(" %[^\n]", &nomeFunc);
+                    scanf(" %[^\n]", nomeFunc);
                     cout << "Digite o cargo do funcionario: ";
-                    scanf(" %[^\n]", &cargo);
+                    scanf(" %[^\n]", cargo);
                     cout << "Digite o telefone do funcionario: ";
                     cin >> telFunc;
                     cout << "Digite o salario do funcionario: ";
                     cin >> salario;
                     Funcionario novoFunc;
-                    novoFunc.cadastraFunc(&novoFunc, numFuncionarios, codFunc, nomeFunc, cargo, telFunc, salario);
+                    novoFunc.cadastraFunc(funcionarios, numFuncionarios, codFunc, nomeFunc, cargo, telFunc, salario);
                     novoFunc.adicionaFuncionario(&funcionarios, numFuncionarios, capFuncionarios, novoFunc);
                     break;
                 }
@@ -723,17 +737,13 @@ int main() {
             }
             case 4:
                 //cadastrar estadia
-                mostraEstadias(estadias, numEstadias);
                 break;
             case 5:
                 //dar baixa em estadia
                 break;
             case 6:{
                 //mostrar estadias
-                int codClienteEstadia;
-                cout << "Digite o codigo do cliente para ver suas estadias: ";
-                cin >> codClienteEstadia;
-
+                mostraEstadias(estadias, numEstadias);
                 break;
             }
             case 7:{
@@ -766,6 +776,7 @@ int main() {
             }
             case 8:
                 //backup de dados
+                BackupdeDados(clientes, numClientes, funcionarios, numFuncionarios, quartos, numQuartos, estadias, numEstadias);
                 break;
             case 9:
                 //restaurar dados
