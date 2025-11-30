@@ -2,6 +2,7 @@
 #include <string.h>
 #include <cstdlib>
 #include <cstdio>
+#define valorDiaria 100
 
 using namespace std;
 
@@ -319,14 +320,12 @@ class Quarto{
     private:
         int numQuarto;
         int quantHospedes;
-        float valorDiaria;
         bool status;
         int codigoCliente;
     public:
         //encapsulamento
         int getNumQuarto(){return numQuarto;};
         int getQuantHospedes(){return quantHospedes;};
-        float getValorDiaria(){return valorDiaria;};
         bool getStatus(){return status;};
         int getCodigoCliente(){return codigoCliente;};
 
@@ -338,11 +337,6 @@ class Quarto{
         void setQuantHospedes(int y){
             if (y > 0)
                 quantHospedes = y;
-        }
-
-        void setValorDiaria(float z){
-            if (z > 0)
-                valorDiaria = z;
         }
 
         void setStatus(bool a){
@@ -377,7 +371,7 @@ class Quarto{
             return false;
         }
 
-        void cadastraQuarto(Quarto *quartos, int numQuartos, int numeroQuarto, int quantHospedes, float valorDiaria, bool status, int codigoCliente){
+        void cadastraQuarto(Quarto *quartos, int numQuartos, int numeroQuarto, int quantHospedes, bool status){
             if (numQuartoJaExiste(numeroQuarto, quartos, numQuartos) == true){
                 cout << "Quarto ja ocupado! Cadastro nao realizado." << endl;
                 return;
@@ -385,9 +379,7 @@ class Quarto{
             else{
                 setNumQuarto(numeroQuarto);
                 setQuantHospedes(quantHospedes);
-                setValorDiaria(valorDiaria);
                 setStatus(status);
-                setCodigoCliente(codigoCliente);
                 cout << "Quarto cadastrado com sucesso!" << endl;
             }
         }
@@ -396,6 +388,7 @@ class Quarto{
 //procedimento para verificar se o quarto pertence ao cliente
 //caso precise, pode ser usado para verificar se o cliente pode fazer check-out ou não
 //usar na classe estadia
+//talvez esta funcao nao seja mais necessaria
 void verificaQuartoPertenceCliente(Quarto *quarto, int numQuartos, int numeroQuarto, int codigoCliente){
     for (int i = 0; i < numQuartos; i++){
         if (quarto[i].getNumQuarto() == numeroQuarto){
@@ -440,7 +433,7 @@ class Estadia{
         int numDiarias;
         //puxando codigo cliente e num quarto das classes cliente e quarto;
         int codigoCliente;
-        int numQuarto;
+        int quantHospedes;
         char nomeCliente[99];
     public:
         //encapsulamento
@@ -449,7 +442,7 @@ class Estadia{
         int getDataSaida(){return dataSaida;};
         int getNumDiarias(){return numDiarias;};
         int getCodigoCliente(){return codigoCliente;};
-        int getNumQuarto(){return numQuarto;};
+        int getNumQuarto(){return quantHospedes;};
         char *getNomeCliente(){return nomeCliente;};
 
         void setcodigoEstadia(int a){
@@ -474,35 +467,50 @@ class Estadia{
         }
         void setnumQuarto(int f){
             if (f > 0)
-                numQuarto = f;
+                quantHospedes = f;
         }
         void  setnomeCliente(char g[99]){
             strcpy(nomeCliente, g);
         }
 
-    void cadastrarEstadia(Estadia *estadia, int numEstadias, int codEstadia, int dataEntrada, int dataSaida, int numDiarias, int codCliente, int numQuarto, Cliente *clientes, int numClientes){
-        if (verificaCliente(clientes, numClientes, codCliente) == false){
-            cout << "Codigo de cliente nao existe. Cadastro de estadia nao realizado." << endl;
-            return;
-        }
-        else if(dataSaida <= dataEntrada){
-            cout << "Data de saida invalida. Cadastro de estadia nao realizado." << endl;
-            return;
-        }
-        else  if (!verificaQuartoPertenceClienteBool(NULL, 0, numQuarto, codCliente)){
-            cout << "Quarto nao pertence ao cliente. Cadastro de estadia nao realizado." << endl;
-            return;
-        }
-        else{
-            setcodigoEstadia(codEstadia);
-            setdataEntrada(dataEntrada);
-            setdataSaida(dataSaida);
-            setnumDiarias(numDiarias);
-            setcodigoCliente(codCliente);
-            setnumQuarto(numQuarto);
-            cout << "Estadia cadastrada com sucesso!" << endl;
+    void cadastrarEstadia(Estadia *estadias, int numEstadias, Quarto *quartos, int numQuartos){    
+        int codCliente, quantHospedes, dataEntrada, dataSaida;
+        cout << "Digite o codigo do cliente: ";
+        cin >> codCliente;
+        cout << "Digite a quantidade de hospedes: ";
+        cin >> quantHospedes;
+        cout << "Digite a data de entrada: ";
+        cin >> dataEntrada;
+        cout << "Digite a data de saida: ";
+        cin >> dataSaida;
+
+        for (int i = 0; i < numQuartos; i++){
+            if (quartos[i].getQuantHospedes() >= quantHospedes && quartos[i].getStatus() == false){
+                setcodigoCliente(codCliente);
+                setnumQuarto(quartos[i].getNumQuarto());
+                setdataEntrada(dataEntrada);
+                setdataSaida(dataSaida);
+                int diarias = dataSaida - dataEntrada;
+                setnumDiarias(diarias);
+                cout << "Estadia cadastrada com sucesso!" << endl;
+                quartos[i].setStatus(true); //marca o quarto como ocupado
+                quartos[i].setCodigoCliente(codCliente); //associa o cliente ao quarto
+                return;
+            }
         }
     }
+
+    void adicionaEstadia(Estadia **temp, int &num, int &cap, Estadia novaEstadia){
+        if (num >= cap){
+            cap = (cap == 0) ? 5 : cap * 2;
+            *temp = (Estadia*) realloc(*temp, cap * sizeof(Estadia));
+        }
+        Estadia *p = *temp;
+        p[num] = novaEstadia;
+        num++;
+    }
+
+
 };
 
 void BackupdeDados(Cliente *cliente, int numClientes, Funcionario *funcionario, int numFuncs ,Quarto *quarto, int numQuartos, Estadia *estadia, int numEstadias){
@@ -532,6 +540,7 @@ void BackupdeDados(Cliente *cliente, int numClientes, Funcionario *funcionario, 
     fclose(backup);
     cout << "Backup realizado com sucesso!" << endl;
 }
+
 void RestaurarDados(){
     //implementar restaurar dados
 }
@@ -582,9 +591,9 @@ void mostraEstadias(Estadia *estadias, int numEstadias){
         
     }
 }
-    void baixaEstadia(){
-        //implementar baixa de estadia
-    }
+void baixaEstadia(){
+    //implementar baixa de estadia
+}
 
 int main() {
     Cliente *clientes = NULL;
@@ -712,32 +721,26 @@ int main() {
             case 3:{
                 //cadastro de quarto
                 int numeroQuarto, quantHospedes, codigoClienteQuarto;
-                float valorDiaria;
                 bool status;
                 cout << "Digite o numero do quarto: ";
                 cin >> numeroQuarto;
-                cout << "Digite a quantidade de hospedes: ";
+                cout << "Digite a capacidade de hospedes: ";
                 cin >> quantHospedes;
-                cout << "Digite o valor da diaria: ";
-                cin >> valorDiaria;
                 cout << "Digite o status do quarto (1 para ocupado, 0 para livre): ";
                 cin >> status;
-                cout << "Digite o codigo do cliente que ira ocupar o quarto: ";
-                cin >> codigoClienteQuarto;
-                //verifica se o codigo do cliente existe
-                if (!verificaCliente(clientes, numClientes, codigoClienteQuarto)){
-                    cout << "Codigo de cliente nao existe. Cadastro de quarto nao realizado." << endl;
-                    break;
-                }
 
                 Quarto novoQuarto;
-                novoQuarto.cadastraQuarto(quartos, numQuartos, numeroQuarto, quantHospedes, valorDiaria, status, codigoClienteQuarto);
+                novoQuarto.cadastraQuarto(quartos, numQuartos, numeroQuarto, quantHospedes, status);
                 novoQuarto.adicionaQuarto(&quartos, numQuartos, capQuartos, novoQuarto);
                 break;
             }
-            case 4:
+            case 4:{
                 //cadastrar estadia
+                Estadia novaEstadia;
+                novaEstadia.cadastrarEstadia(estadias, numEstadias, quartos, numQuartos);
+                novaEstadia.adicionaEstadia(&estadias, numEstadias, capEstadias, novaEstadia);
                 break;
+            }
             case 5:
                 //dar baixa em estadia
                 break;
