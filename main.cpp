@@ -1,15 +1,15 @@
-// Trabalho Pratico AED I 
-// Gabriel Campos e Lucas Emanuel
+// Trabalho Prático AED I 
+// Alunos: Gabriel Campos e Lucas Emanuel
 
-#include <iostream>   // Entrada e saída (cout, cin).
-#include <string.h>   // Funções para strings estilo C.
-#include <cstdlib>    // Funções gerais (system, etc).
-#include <cstdio>     // Funções de entrada e saída do C.
-#include <fstream>
-#define valorDiaria 100.0   // Valor fixo da diária do hotel.
+#include <iostream>   // Entrada e saída (cout, cin)
+#include <string.h>   // Funções para strings em estilo C
+#include <cstdlib>    // Funções gerais (system, etc)
+#include <cstdio>     // Funções de entrada e saída do C
+#include <fstream>    // Manipulação de arquivos
 
-using namespace std; // Permite usar cout e cin sem "std::".
+#define valorDiaria 100.0   // Valor fixo da diária do hotel
 
+using namespace std; 
 
 class Cliente{
     private:
