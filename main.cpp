@@ -5,6 +5,7 @@
 #include <string.h>   // Funções para strings estilo C.
 #include <cstdlib>    // Funções gerais (system, etc).
 #include <cstdio>     // Funções de entrada e saída do C.
+#include <fstream>
 #define valorDiaria 100.0   // Valor fixo da diária do hotel.
 
 using namespace std; // Permite usar cout e cin sem "std::".
@@ -623,48 +624,90 @@ void baixaEstadia(Estadia *estadias, int &numEstadias){
     cout << "Estadia nao encontrada. Nenhuma baixa realizada." << endl;
 }
 
-// Função para realizar backup de todos os dados do sistema em arquivo binário
-void BackupdeDados(Cliente *cliente, int numClientes, Funcionario *funcionario, int numFuncs,
-                   Quarto *quarto, int numQuartos, Estadia *estadia, int numEstadias){
-    
-    FILE *backup;
+void BackupdeDados(Cliente *clientes, int numClientes,
+                   Funcionario *funcionarios, int numFuncs,
+                   Quarto *quartos, int numQuartos,
+                   Estadia *estadias, int numEstadias) {
 
-    // Abre (ou cria) o arquivo "backup.bin" para escrita binária
-    backup = fopen("backup.bin", "wb");
-    if (backup == NULL){
+    ofstream backup("backup.bin", ios::binary); // arquivo binário
+    if (!backup.is_open()) {
         cout << "Erro ao criar arquivo de backup." << endl;
         return;
     }
 
-    // Escreve todos os clientes no arquivo
-    for (int i = 0; i < numClientes; i++){
-        fwrite(&cliente[i], sizeof(Cliente), 1, backup);
+    // Salvar Clientes
+    backup.write((char*)&numClientes, sizeof(int));
+    for (int i = 0; i < numClientes; i++) {
+        backup.write((char*)&clientes[i], sizeof(Cliente));
     }
 
-    // Escreve todos os funcionários no arquivo
-    for (int i = 0; i < numFuncs; i++){
-        fwrite(&funcionario[i], sizeof(Funcionario), 1, backup);
+    // Salvar Funcionários
+    backup.write((char*)&numFuncs, sizeof(int));
+    for (int i = 0; i < numFuncs; i++) {
+        backup.write((char*)&funcionarios[i], sizeof(Funcionario));
     }
 
-    // Escreve todos os quartos no arquivo
-    for (int i = 0; i < numQuartos; i++){
-        fwrite(&quarto[i], sizeof(Quarto), 1, backup);
+    // Salvar Quartos
+    backup.write((char*)&numQuartos, sizeof(int));
+    for (int i = 0; i < numQuartos; i++) {
+        backup.write((char*)&quartos[i], sizeof(Quarto));
     }
 
-    // Escreve todas as estadias no arquivo
-    for (int i = 0; i < numEstadias; i++){
-        fwrite(&estadia[i], sizeof(Estadia), 1, backup);
+    // Salvar Estadias
+    backup.write((char*)&numEstadias, sizeof(int));
+    for (int i = 0; i < numEstadias; i++) {
+        backup.write((char*)&estadias[i], sizeof(Estadia));
     }
 
-    // Fecha o arquivo após a escrita
-    fclose(backup);
-
+    backup.close();
     cout << "Backup realizado com sucesso!" << endl;
 }
 
-void RestaurarDados(){
-    //implementar restaurar dados
+
+void RestaurarDados(Cliente *&clientes, int &numClientes,
+                    Funcionario *&funcionarios, int &numFuncs,
+                    Quarto *&quartos, int &numQuartos,
+                    Estadia *&estadias, int &numEstadias) {
+
+    ifstream backup("backup.bin", ios::binary);
+    if (!backup.is_open()) {
+        cout << "Erro ao abrir arquivo de backup." << endl;
+        return;
     }
+
+    // Restaurar Clientes
+    backup.read((char*)&numClientes, sizeof(int));
+    clientes = new Cliente[numClientes];
+    for (int i = 0; i < numClientes; i++) {
+        backup.read((char*)&clientes[i], sizeof(Cliente));
+    }
+
+    // Restaurar Funcionários
+    backup.read((char*)&numFuncs, sizeof(int));
+    funcionarios = new Funcionario[numFuncs];
+    for (int i = 0; i < numFuncs; i++) {
+        backup.read((char*)&funcionarios[i], sizeof(Funcionario));
+    }
+
+    // Restaurar Quartos
+    backup.read((char*)&numQuartos, sizeof(int));
+    quartos = new Quarto[numQuartos];
+    for (int i = 0; i < numQuartos; i++) {
+        backup.read((char*)&quartos[i], sizeof(Quarto));
+    }
+
+    // Restaurar Estadias
+    backup.read((char*)&numEstadias, sizeof(int));
+    estadias = new Estadia[numEstadias];
+    for (int i = 0; i < numEstadias; i++) {
+        backup.read((char*)&estadias[i], sizeof(Estadia));
+    }
+
+    backup.close();
+    cout << "Dados restaurados com sucesso!" << endl;
+}
+
+
 
 //procedimento para mostrar as estadias cadastradas de um cliente especifico
 // Função para mostrar estadias cadastradas
@@ -675,8 +718,9 @@ void mostraEstadias(Estadia *estadias, int numEstadias){
 
     // Menu de opções para o usuário
     cout << "Escolha uma das opcoes para mostrar as estadias:" << endl;
-    cout << "[1] : Mostrar estadias por codigo do cliente." << endl;
-    cout << "[2] : Mostrar estadias por nome do cliente." << endl;   
+    cout << "[1] Mostrar estadias por codigo do cliente." << endl;
+    cout << "[2] Mostrar estadias por nome do cliente." << endl;  
+    cout << ">> "; 
     cin >> opcMostrar;
     cout << "\n" << endl; // Pula linha para melhor formatação
 
@@ -939,7 +983,8 @@ int main() {
                 break;
 
             case 9:
-                // Restaurar dados (a implementar)
+                //Restaura dados do sistema
+                RestaurarDados(clientes, numClientes, funcionarios, numFuncionarios, quartos, numQuartos, estadias, numEstadias);
                 break;
 
             default:
