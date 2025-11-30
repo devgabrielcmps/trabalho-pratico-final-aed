@@ -70,7 +70,7 @@ class Cliente{
                              char nomeCliente[99], char end[99], int telCliente){
 
             if (codigoClienteJaExiste(codCliente, cliente, numDeClientes)){
-                cout << "Codigo de cliente ja existe. Cadastro nao realizado." << endl;
+                cout << "Codigo de cliente ja existe. Cadastro nao realizado. \n" << endl;
                 return;
             }
             else{
@@ -78,7 +78,7 @@ class Cliente{
                 setNomeCliente(nomeCliente);
                 setEndereco(end);
                 setTelCliente(telCliente);
-                cout << "Cliente cadastrado com sucesso!" << endl;
+                cout << "Cliente cadastrado com sucesso! \n" << endl;
             }
         }
 };
@@ -151,7 +151,7 @@ class Funcionario{
                           char nomeFunc[99], char cargo[30], int telFunc, float salario){
 
             if (codigoFuncJaExiste(codFunc, funcionarios, numFuncionarios)){
-                cout << "Codigo de funcionario ja existe. Cadastro nao realizado." << endl;
+                cout << "Codigo de funcionario ja existe. Cadastro nao realizado. \n" << endl;
                 return;
             }
             else{
@@ -160,7 +160,7 @@ class Funcionario{
                 setCargo(cargo);
                 setTelFunc(telFunc);
                 setSalario(salario);
-                cout << "Funcionario cadastrado com sucesso!" << endl;
+                cout << "Funcionario cadastrado com sucesso! \n" << endl;
             }            
         }
 };
@@ -185,11 +185,11 @@ void deletaFuncionario(Funcionario *func, int &numFuncs, int codigofunc){
         }
 
         --numFuncs; // diminui o total de funcionários
-        cout << "Funcionario deletado com sucesso!" << endl;
+        cout << "Funcionario deletado com sucesso! \n" << endl;
     }
     else{
         // Caso o código não exista no vetor
-        cout << "Funcionario nao encontrado." << endl;
+        cout << "Funcionario nao encontrado. \n" << endl;
     }
 }
 
@@ -213,11 +213,11 @@ void deletaCliente(Cliente *cliente, int &numClientes, int codigoCliente){
         }
 
         --numClientes; // diminui o total de clientes
-        cout << "Cliente deletado com sucesso!" << endl;
+        cout << "Cliente deletado com sucesso! \n" << endl;
     }
     else{
         // Caso o código não exista
-        cout << "Cliente nao encontrado." << endl;
+        cout << "Cliente nao encontrado. \n" << endl;
     }
 }
 
@@ -245,7 +245,7 @@ void editaFuncionario(Funcionario *func, int numFuncs, int codigoFunc){
                     cout << "Digite o novo nome: ";
                     scanf(" %[^\n]", novoNome);
                     func[i].setNomeFunc(novoNome);
-                    cout << "Nome atualizado com sucesso!" << endl;
+                    cout << "Nome atualizado com sucesso! \n" << endl;
                     break;
                 }
                 case 2:{ // Edita cargo
@@ -253,7 +253,7 @@ void editaFuncionario(Funcionario *func, int numFuncs, int codigoFunc){
                     cout << "Digite o novo cargo: ";
                     scanf(" %[^\n]", novoCargo);
                     func[i].setCargo(novoCargo);
-                    cout << "Cargo atualizado com sucesso!" << endl;
+                    cout << "Cargo atualizado com sucesso! \n" << endl;
                     break;
                 }
                 case 3:{ // Edita telefone
@@ -261,7 +261,7 @@ void editaFuncionario(Funcionario *func, int numFuncs, int codigoFunc){
                     cout << "Digite o novo telefone: ";
                     cin >> novoTel;
                     func[i].setTelFunc(novoTel);
-                    cout << "Telefone atualizado com sucesso!" << endl;
+                    cout << "Telefone atualizado com sucesso! \n" << endl;
                     break;
                 }
                 case 4:{ // Edita salário
@@ -269,11 +269,11 @@ void editaFuncionario(Funcionario *func, int numFuncs, int codigoFunc){
                     cout << "Digite o novo salario: ";
                     cin >> novoSalario;
                     func[i].setSalario(novoSalario);
-                    cout << "Salario atualizado com sucesso!" << endl;
+                    cout << "Salario atualizado com sucesso! \n" << endl;
                     break;
                 }
                 default:
-                    cout << "Opcao invalida. Nenhum dado foi alterado." << endl;
+                    cout << "Opcao invalida. Nenhum dado foi alterado. \n" << endl;
             }
 
             return; // Sai da função após editar
@@ -307,7 +307,7 @@ void editaCliente(Cliente *cliente, int numClientes, int codigoCliente){
                     cout << "Digite o novo nome: ";
                     scanf(" %[^\n]", novoNome);
                     cliente[i].setNomeCliente(novoNome);
-                    cout << "Nome atualizado com sucesso!" << endl;
+                    cout << "Nome atualizado com sucesso! \n" << endl;
                     break;
                 }
                 case 2:{ // Editar endereço
@@ -315,7 +315,7 @@ void editaCliente(Cliente *cliente, int numClientes, int codigoCliente){
                     cout << "Digite o novo endereco: ";
                     scanf(" %[^\n]", novoEndereco);
                     cliente[i].setEndereco(novoEndereco);
-                    cout << "Endereco atualizado com sucesso!" << endl;
+                    cout << "Endereco atualizado com sucesso! \n" << endl;
                     break;
                 }
                 case 3:{ // Editar telefone
@@ -323,11 +323,11 @@ void editaCliente(Cliente *cliente, int numClientes, int codigoCliente){
                     cout << "Digite o novo telefone: ";
                     cin >> novoTel;
                     cliente[i].setTelCliente(novoTel);
-                    cout << "Telefone atualizado com sucesso!" << endl;
+                    cout << "Telefone atualizado com sucesso! \n" << endl;
                     break;
                 }
                 default:
-                    cout << "Opcao invalida. Nenhum dado foi alterado." << endl;
+                    cout << "Opcao invalida. Nenhum dado foi alterado. \n" << endl;
             }
 
             return; // Sai após editar
@@ -344,7 +344,7 @@ void procuraFuncionario(Funcionario *func, int numFuncs, int codigoFunc){
     for (int i = 0; i < numFuncs; i++){
         // Verifica se o código do funcionário atual é igual ao procurado
         if (func[i].getCodigoFunc() == codigoFunc){
-            cout << "Funcionario encontrado!" << endl;
+            cout << "Funcionario encontrado! \n" << endl;
             
             // Exibe os dados do funcionário encontrado
             cout << "Codigo: " << func[i].getCodigoFunc() << endl;
@@ -358,7 +358,7 @@ void procuraFuncionario(Funcionario *func, int numFuncs, int codigoFunc){
     }
 
     // Caso o funcionário não seja encontrado
-    cout << "Funcionario nao encontrado." << endl;
+    cout << "Funcionario nao encontrado. \n" << endl;
 }
 
 // Função para procurar um cliente pelo código
@@ -367,7 +367,7 @@ void procuraCliente(Cliente *cliente, int numClientes, int codigoCliente){
     for (int i = 0; i < numClientes; i++){
         // Verifica se o código do cliente atual é igual ao procurado
         if (cliente[i].getCodigoCliente() == codigoCliente){
-            cout << "Cliente encontrado!" << endl;
+            cout << "Cliente encontrado! \n" << endl;
             
             // Exibe os dados do cliente encontrado
             cout << "Codigo: " << cliente[i].getCodigoCliente() << endl;
@@ -381,7 +381,7 @@ void procuraCliente(Cliente *cliente, int numClientes, int codigoCliente){
     }
 
     // Caso o cliente não seja encontrado
-    cout << "Cliente nao encontrado." << endl;
+    cout << "Cliente nao encontrado. \n" << endl;
 }
 
 class Quarto{
@@ -443,7 +443,7 @@ class Quarto{
         // Cadastra um quarto caso o número não esteja repetido
         void cadastraQuarto(Quarto *quartos, int numQuartos, int numeroQuarto, int quantHospedes, bool status){
             if (numQuartoJaExiste(numeroQuarto, quartos, numQuartos)){
-                cout << "Quarto ja existe! Cadastro nao realizado." << endl;
+                cout << "Quarto ja existe! Cadastro nao realizado. \n" << endl;
                 return;
             }
             else{
@@ -451,7 +451,7 @@ class Quarto{
                 setQuantHospedes(quantHospedes);
                 status = false; // Quarto inicia como livre
                 setStatus(status);
-                cout << "Quarto cadastrado com sucesso!" << endl;
+                cout << "Quarto cadastrado com sucesso! \n" << endl;
             }
         }
 };
@@ -468,7 +468,7 @@ void mostraQuartos(Quarto *quartos, int numQuartos){
 
         // Mostra o status do quarto: "Ocupado" ou "Livre"
         cout << "Status: " << (quartos[i].getStatus() ? "Ocupado" : "Livre") << endl;
-        cout << "------------------------" << endl; // Separador visual
+        cout << "------------------------ \n" << endl; // Separador visual
     }
 }
 
@@ -546,7 +546,7 @@ class Estadia{
 
             // Verifica se o cliente existe
             if (verificaCliente(clientes, numClientes, codCliente) == false){
-                cout << "Cliente nao existe. Cadastro de estadia nao realizado." << endl;
+                cout << "Cliente nao existe. Cadastro de estadia nao realizado. \n" << endl;
                 return;
             }
 
@@ -569,7 +569,7 @@ class Estadia{
                     int diarias = dataSaida - dataEntrada; // Calcula o número de diárias
                     setnumDiarias(diarias);
 
-                    cout << "Estadia cadastrada com sucesso!" << endl;
+                    cout << "Estadia cadastrada com sucesso! \n" << endl;
 
                     quartos[i].setStatus(true);          // Marca o quarto como ocupado
                     quartos[i].setCodigoCliente(codCliente); // Associa o cliente ao quarto
@@ -605,7 +605,7 @@ void baixaEstadia(Estadia *estadias, int &numEstadias){
     for (int i = 0; i < numEstadias; i++){
         // Verifica se a estadia atual tem o código informado
         if (estadias[i].getCodigoEstadia() == codEstadia){
-            cout << "Estadia encontrada! Baixa realizada com sucesso!" << endl;
+            cout << "Estadia encontrada! Baixa realizada com sucesso! \n" << endl;
 
             // Calcula o valor total da estadia (diárias * valor da diária)
             float valorTotal = estadias[i].getNumDiarias() * valorDiaria;
@@ -621,92 +621,132 @@ void baixaEstadia(Estadia *estadias, int &numEstadias){
     }
 
     // Caso a estadia não seja encontrada
-    cout << "Estadia nao encontrada. Nenhuma baixa realizada." << endl;
+    cout << "Estadia nao encontrada. Nenhuma baixa realizada. \n" << endl;
 }
 
 void BackupdeDados(Cliente *clientes, int numClientes,
                    Funcionario *funcionarios, int numFuncs,
                    Quarto *quartos, int numQuartos,
                    Estadia *estadias, int numEstadias) {
-
-    ofstream backup("backup.bin", ios::binary); // arquivo binário
-    if (!backup.is_open()) {
-        cout << "Erro ao criar arquivo de backup." << endl;
-        return;
+    
+    // --- Backup de Clientes ---
+    ofstream backupClientes("clientes.bin", ios::binary); //ofstream eh como se fosse uma caneta, ela qm escreve
+    if (!backupClientes.is_open()) {
+        cout << "Erro ao criar arquivo de backup de clientes. \n" << endl;
+    } else {
+        backupClientes.write((char*)&numClientes, sizeof(int));
+        for (int i = 0; i < numClientes; i++) {
+            backupClientes.write((char*)&clientes[i], sizeof(Cliente));
+        }
+        backupClientes.close();
     }
 
-    // Salvar Clientes
-    backup.write((char*)&numClientes, sizeof(int));
-    for (int i = 0; i < numClientes; i++) {
-        backup.write((char*)&clientes[i], sizeof(Cliente));
+    // --- Backup de Funcionários ---
+    ofstream backupFuncionarios("funcionarios.bin", ios::binary);
+    if (!backupFuncionarios.is_open()) {
+        cout << "Erro ao criar arquivo de backup de funcionarios." << endl;
+    } else {
+        backupFuncionarios.write((char*)&numFuncs, sizeof(int));
+        for (int i = 0; i < numFuncs; i++) {
+            backupFuncionarios.write((char*)&funcionarios[i], sizeof(Funcionario));
+        }
+        backupFuncionarios.close();
     }
 
-    // Salvar Funcionários
-    backup.write((char*)&numFuncs, sizeof(int));
-    for (int i = 0; i < numFuncs; i++) {
-        backup.write((char*)&funcionarios[i], sizeof(Funcionario));
+    // --- Backup de Quartos ---
+    ofstream backupQuartos("quartos.bin", ios::binary);
+    if (!backupQuartos.is_open()) {
+        cout << "Erro ao criar arquivo de backup de quartos. \n" << endl;
+    } else {
+        backupQuartos.write((char*)&numQuartos, sizeof(int));
+        for (int i = 0; i < numQuartos; i++) {
+            backupQuartos.write((char*)&quartos[i], sizeof(Quarto));
+        }
+        backupQuartos.close();
     }
 
-    // Salvar Quartos
-    backup.write((char*)&numQuartos, sizeof(int));
-    for (int i = 0; i < numQuartos; i++) {
-        backup.write((char*)&quartos[i], sizeof(Quarto));
+    // --- Backup de Estadias ---
+    ofstream backupEstadias("estadias.bin", ios::binary);
+    if (!backupEstadias.is_open()) {
+        cout << "Erro ao criar arquivo de backup de estadias. \n" << endl;
+    } else {
+        backupEstadias.write((char*)&numEstadias, sizeof(int));
+        for (int i = 0; i < numEstadias; i++) {
+            backupEstadias.write((char*)&estadias[i], sizeof(Estadia));
+        }
+        backupEstadias.close();
     }
 
-    // Salvar Estadias
-    backup.write((char*)&numEstadias, sizeof(int));
-    for (int i = 0; i < numEstadias; i++) {
-        backup.write((char*)&estadias[i], sizeof(Estadia));
-    }
-
-    backup.close();
-    cout << "Backup realizado com sucesso!" << endl;
+    cout << "Backup de todos os dados realizado com sucesso! \n" << endl;
 }
-
 
 void RestaurarDados(Cliente *&clientes, int &numClientes,
                     Funcionario *&funcionarios, int &numFuncs,
                     Quarto *&quartos, int &numQuartos,
                     Estadia *&estadias, int &numEstadias) {
 
-    ifstream backup("backup.bin", ios::binary);
-    if (!backup.is_open()) {
-        cout << "Erro ao abrir arquivo de backup." << endl;
-        return;
+    // --- Restaurar Clientes ---
+    ifstream backupClientes("clientes.bin", ios::binary);
+    if (!backupClientes.is_open()) {
+        cout << "Erro ao abrir arquivo de clientes." << endl;
+        numClientes = 0;
+        clientes = nullptr;
+    } else {
+        backupClientes.read((char*)&numClientes, sizeof(int));
+        clientes = new Cliente[numClientes];
+        for (int i = 0; i < numClientes; i++) {
+            backupClientes.read((char*)&clientes[i], sizeof(Cliente));
+        }
+        backupClientes.close();
     }
 
-    // Restaurar Clientes
-    backup.read((char*)&numClientes, sizeof(int));
-    clientes = new Cliente[numClientes];
-    for (int i = 0; i < numClientes; i++) {
-        backup.read((char*)&clientes[i], sizeof(Cliente));
+    // --- Restaurar Funcionários ---
+    ifstream backupFuncionarios("funcionarios.bin", ios::binary);
+    if (!backupFuncionarios.is_open()) {
+        cout << "Erro ao abrir arquivo de funcionarios." << endl;
+        numFuncs = 0;
+        funcionarios = nullptr;
+    } else {
+        backupFuncionarios.read((char*)&numFuncs, sizeof(int));
+        funcionarios = new Funcionario[numFuncs];
+        for (int i = 0; i < numFuncs; i++) {
+            backupFuncionarios.read((char*)&funcionarios[i], sizeof(Funcionario));
+        }
+        backupFuncionarios.close();
     }
 
-    // Restaurar Funcionários
-    backup.read((char*)&numFuncs, sizeof(int));
-    funcionarios = new Funcionario[numFuncs];
-    for (int i = 0; i < numFuncs; i++) {
-        backup.read((char*)&funcionarios[i], sizeof(Funcionario));
+    // --- Restaurar Quartos ---
+    ifstream backupQuartos("quartos.bin", ios::binary);
+    if (!backupQuartos.is_open()) {
+        cout << "Erro ao abrir arquivo de quartos. \n" << endl;
+        numQuartos = 0;
+        quartos = nullptr;
+    } else {
+        backupQuartos.read((char*)&numQuartos, sizeof(int));
+        quartos = new Quarto[numQuartos];
+        for (int i = 0; i < numQuartos; i++) {
+            backupQuartos.read((char*)&quartos[i], sizeof(Quarto));
+        }
+        backupQuartos.close();
     }
 
-    // Restaurar Quartos
-    backup.read((char*)&numQuartos, sizeof(int));
-    quartos = new Quarto[numQuartos];
-    for (int i = 0; i < numQuartos; i++) {
-        backup.read((char*)&quartos[i], sizeof(Quarto));
+    // --- Restaurar Estadias ---
+    ifstream backupEstadias("estadias.bin", ios::binary);
+    if (!backupEstadias.is_open()) {
+        cout << "Erro ao abrir arquivo de estadias. \n" << endl;
+        numEstadias = 0;
+        estadias = nullptr;
+    } else {
+        backupEstadias.read((char*)&numEstadias, sizeof(int));
+        estadias = new Estadia[numEstadias];
+        for (int i = 0; i < numEstadias; i++) {
+            backupEstadias.read((char*)&estadias[i], sizeof(Estadia));
+        }
+        backupEstadias.close();
     }
 
-    // Restaurar Estadias
-    backup.read((char*)&numEstadias, sizeof(int));
-    estadias = new Estadia[numEstadias];
-    for (int i = 0; i < numEstadias; i++) {
-        backup.read((char*)&estadias[i], sizeof(Estadia));
-    }
-
-    backup.close();
-    cout << "Dados restaurados com sucesso!" << endl;
+    cout << "Restauracao de todos os dados concluida! \n" << endl;
 }
-
 
 
 //procedimento para mostrar as estadias cadastradas de um cliente especifico
@@ -765,7 +805,7 @@ void mostraEstadias(Estadia *estadias, int numEstadias){
         }
         default:
             // Caso a opção digitada seja inválida
-            cout << "Opcao invalida. Nenhum dado foi mostrado." << endl;
+            cout << "Opcao invalida. Nenhum dado foi mostrado. \n" << endl;
     }
 }
 
@@ -794,8 +834,8 @@ int main() {
         cout << "[5] Dar baixa em uma estadia" << endl;
         cout << "[6] Mostrar estadias." << endl;
         cout << "[7] Pesquisar cliente/funcionario" << endl;
-        cout << "[8] Backup de dados" << endl;
-        cout << "[9] Restaurar dados" << endl;
+        cout << "[8] Fazer backup " << endl;
+        cout << "[9] Restaurar backup" << endl;
         cout << "[0] Sair." << endl;
         cout << ">> ";
 
@@ -815,7 +855,7 @@ int main() {
 
                 // Validação da opção
                 if (opc2 < 1 || opc2 > 3){
-                    cout << "opcao invalida, retornando ao menu principal." << endl;
+                    cout << "opcao invalida, retornando ao menu principal. \n" << endl;
                     break;
                 }
 
@@ -867,7 +907,7 @@ int main() {
                 cout << "\n" << endl;
 
                 if (opcFunc < 1 || opcFunc > 3){
-                    cout << "opcao invalida, retornando ao menu principal." << endl;
+                    cout << "opcao invalida, retornando ao menu principal. \n" << endl;
                     break;
                 }
 
