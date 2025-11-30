@@ -309,7 +309,6 @@ void procuraCliente(Cliente *cliente, int numClientes, int codigoCliente){
             cout << "Nome: " << cliente[i].getNomeCliente() << endl;
             cout << "Endereco: " << cliente[i].getEndereco() << endl;
             cout << "Telefone: " << cliente[i].getTelCliente() << endl;
-            cout << "Quarto numero: " << cliente[i].getCodigoCliente() << endl;
             return;
         }
     }
