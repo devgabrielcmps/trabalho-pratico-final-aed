@@ -653,6 +653,14 @@ class Estadia{
                     setdataEntrada(dataEntrada);
                     setdataSaida(dataSaida);
 
+                    for (int j = 0; j < numClientes; j++){
+                        // Copia o nome do cliente para a estadia
+                        if (clientes[j].getCodigoCliente() == codCliente){
+                            setnomeCliente(clientes[j].getNomeCliente());
+                            break;
+                        }
+                    }
+
                     int diarias = dataSaida - dataEntrada; // Calcula o número de diárias
                     setnumDiarias(diarias);
 
@@ -684,7 +692,7 @@ class Estadia{
 
 
 // Função para dar baixa em uma estadia (check-out)
-void baixaEstadia(Estadia *estadias, int &numEstadias){
+void baixaEstadia(Estadia *estadias, int &numEstadias, Quarto *quartos, int numQuartos){
     // Solicita o código da estadia que será baixada
     cout << "Digite o codigo da estadia para dar baixa: ";
     int codEstadia;
@@ -700,11 +708,21 @@ void baixaEstadia(Estadia *estadias, int &numEstadias){
             float valorTotal = estadias[i].getNumDiarias() * valorDiaria;
             cout << "Valor total da estadia: R$ " << valorTotal << endl;
 
+            int numQuarto = estadias[i].getNumQuarto();
+            for (int j = 0; j < numQuarto; j++){
+                if (estadias[j].getNumQuarto() == numQuarto){
+                    // Libera o quarto associado à estadia
+                    quartos[j].setStatus(false);
+                    quartos[j].setCodigoCliente(0); // Remove a associação do cliente
+                    break;
+                }
+            }
+
             // Remove a estadia do vetor, deslocando os elementos seguintes
             for (int j = i; j < numEstadias - 1; j++){
                 estadias[j] = estadias[j + 1];
             }
-            --numEstadias; // Atualiza o número de estadias cadastradas
+            --numEstadias; // Atualiza o número de estadias cadastradas      
             return; // Encerra a função após a baixa
         }
     }
@@ -1097,7 +1115,7 @@ int main() {
 
             case 5:
                 // Dar baixa em uma estadia
-                baixaEstadia(estadias, numEstadias);
+                baixaEstadia(estadias, numEstadias, quartos, numQuartos);
                 break;
 
             case 6:
