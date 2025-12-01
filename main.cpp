@@ -16,14 +16,14 @@ class Cliente{
         int codigoCliente;      // Código único do cliente
         char nomeCliente[99];   // Nome armazenado em char[]
         char endereco[99];      // Endereço do cliente
-        int telCliente;         // Telefone
+        long long int telCliente;         // Telefone
 
     public:
         // Getters (acessam os dados privados)
         int getCodigoCliente(){ return codigoCliente; };
         char *getNomeCliente(){ return nomeCliente; };
         char *getEndereco(){ return endereco; };
-        int getTelCliente(){ return telCliente; };
+        long long int getTelCliente(){ return telCliente; };
 
         // Setters (alteram os dados privados)
         void setCodigoCliente(int x){
@@ -39,7 +39,7 @@ class Cliente{
             strcpy(endereco, z); // copia o endereço
         }
 
-        void setTelCliente(int a){
+        void setTelCliente(long long int a){
             if (a > 0)
                 telCliente = a;
         }
@@ -67,7 +67,7 @@ class Cliente{
 
         // Cadastra um cliente após verificar se o código já existe
         void cadastraCliente(Cliente *cliente, int numDeClientes, int codCliente,
-                             char nomeCliente[99], char end[99], int telCliente){
+                             char nomeCliente[99], char end[99], long long int telCliente){
 
             if (codigoClienteJaExiste(codCliente, cliente, numDeClientes)){
                 cout << "Codigo de cliente ja existe. Cadastro nao realizado. \n" << endl;
@@ -88,7 +88,7 @@ class Funcionario{
     private:
         int codigoFunc;       // Código de identificação do funcionário
         char nomeFunc[99];    // Nome do funcionário
-        int telFunc;          // Telefone
+        long long int telFunc;          // Telefone
         char cargo[30];       // Cargo/função do funcionário
         float salario;        // Salário
 
@@ -97,7 +97,7 @@ class Funcionario{
         int getCodigoFunc(){ return codigoFunc; };
         char *getNomeFunc(){ return nomeFunc; };
         char *getCargo(){ return cargo; };
-        int getTelFunc(){ return telFunc; };
+        long long int getTelFunc(){ return telFunc; };
         float getSalario(){ return salario; };
 
         // Setters: modificam os dados privados
@@ -114,7 +114,7 @@ class Funcionario{
             strcpy(cargo, z);
         }
 
-        void setTelFunc(int a){
+        void setTelFunc(long long int a){
             if (a > 0)
                 telFunc = a;
         }
@@ -148,7 +148,7 @@ class Funcionario{
 
         // Cadastra um funcionário caso o código não esteja repetido
         void cadastraFunc(Funcionario *funcionarios, int numFuncionarios, int codFunc, 
-                          char nomeFunc[99], char cargo[30], int telFunc, float salario){
+                          char nomeFunc[99], char cargo[30], long long int telFunc, float salario){
 
             if (codigoFuncJaExiste(codFunc, funcionarios, numFuncionarios)){
                 cout << "Codigo de funcionario ja existe. Cadastro nao realizado. \n" << endl;
@@ -165,6 +165,19 @@ class Funcionario{
         }
 };
 
+bool validaTelefone(long long int tel){
+    int contador = 0;
+    while (tel != 0){
+        tel /= 10;
+        contador++;
+    }
+    if (contador >= 8 && contador <= 15){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
 
 void deletaFuncionario(Funcionario *func, int &numFuncs, int codigofunc){
     int index = -1; // posição onde o funcionário será encontrado
@@ -244,6 +257,7 @@ void editaFuncionario(Funcionario *func, int numFuncs, int codigoFunc){
                     char novoNome[99];
                     cout << "Digite o novo nome: ";
                     scanf(" %[^\n]", novoNome);
+                    fflush(stdin);
                     func[i].setNomeFunc(novoNome);
                     cout << "Nome atualizado com sucesso! \n" << endl;
                     break;
@@ -252,14 +266,19 @@ void editaFuncionario(Funcionario *func, int numFuncs, int codigoFunc){
                     char novoCargo[30];
                     cout << "Digite o novo cargo: ";
                     scanf(" %[^\n]", novoCargo);
+                    fflush(stdin);
                     func[i].setCargo(novoCargo);
                     cout << "Cargo atualizado com sucesso! \n" << endl;
                     break;
                 }
                 case 3:{ // Edita telefone
-                    int novoTel;
+                    long long int novoTel;
                     cout << "Digite o novo telefone: ";
                     cin >> novoTel;
+                    if (!validaTelefone(novoTel)){
+                        cout << "Telefone invalido. Nenhum dado foi alterado. \n" << endl;
+                        return;
+                    }
                     func[i].setTelFunc(novoTel);
                     cout << "Telefone atualizado com sucesso! \n" << endl;
                     break;
@@ -306,6 +325,7 @@ void editaCliente(Cliente *cliente, int numClientes, int codigoCliente){
                     char novoNome[99];
                     cout << "Digite o novo nome: ";
                     scanf(" %[^\n]", novoNome);
+                    fflush(stdin);
                     cliente[i].setNomeCliente(novoNome);
                     cout << "Nome atualizado com sucesso! \n" << endl;
                     break;
@@ -314,14 +334,19 @@ void editaCliente(Cliente *cliente, int numClientes, int codigoCliente){
                     char novoEndereco[99];
                     cout << "Digite o novo endereco: ";
                     scanf(" %[^\n]", novoEndereco);
+                    fflush(stdin);
                     cliente[i].setEndereco(novoEndereco);
                     cout << "Endereco atualizado com sucesso! \n" << endl;
                     break;
                 }
                 case 3:{ // Editar telefone
-                    int novoTel;
+                    long long int novoTel;
                     cout << "Digite o novo telefone: ";
                     cin >> novoTel;
+                    if (!validaTelefone(novoTel)){
+                        cout << "Telefone invalido. Nenhum dado foi alterado. \n" << endl;
+                        return;
+                    }
                     cliente[i].setTelCliente(novoTel);
                     cout << "Telefone atualizado com sucesso! \n" << endl;
                     break;
@@ -339,49 +364,124 @@ void editaCliente(Cliente *cliente, int numClientes, int codigoCliente){
 }
 
 // Função para procurar um funcionário pelo código
-void procuraFuncionario(Funcionario *func, int numFuncs, int codigoFunc){
+void procuraFuncionario(Funcionario *func, int numFuncs){
     // Percorre o vetor de funcionários
-    for (int i = 0; i < numFuncs; i++){
-        // Verifica se o código do funcionário atual é igual ao procurado
-        if (func[i].getCodigoFunc() == codigoFunc){
-            cout << "Funcionario encontrado! \n" << endl;
+    int codigoFunc, opcPesquisar;
+    char nomeFunc[99];
+    cout << "[1] Pesquisa por codigo do funcionario." << endl;
+    cout << "[2] Pesquisa por nome do funcionario." << endl;
+    cout << ">> ";
+    cin >> opcPesquisar;
+    cout << "\n" << endl; // Apenas pula linha para formatação
+    switch(opcPesquisar){
+        case 1:{
+            cout << "Digite o codigo do funcionario a ser pesquisado: ";
+            cin >> codigoFunc;
+            for (int i = 0; i < numFuncs; i++){
+                // Verifica se o código do funcionário atual é igual ao procurado
+                if (func[i].getCodigoFunc() == codigoFunc){
+                cout << "Funcionario encontrado! \n" << endl;
             
-            // Exibe os dados do funcionário encontrado
-            cout << "Codigo: " << func[i].getCodigoFunc() << endl;
-            cout << "Nome: " << func[i].getNomeFunc() << endl;
-            cout << "Cargo: " << func[i].getCargo() << endl;
-            cout << "Telefone: " << func[i].getTelFunc() << endl;
-            cout << "Salario: " << func[i].getSalario() << endl;
-            
-            return; // Encerra a função após encontrar
+                    // Exibe os dados do funcionário encontrado
+                    cout << "Codigo: " << func[i].getCodigoFunc() << endl;
+                    cout << "Nome: " << func[i].getNomeFunc() << endl;
+                    cout << "Cargo: " << func[i].getCargo() << endl;
+                    cout << "Telefone: " << func[i].getTelFunc() << endl;
+                    cout << "Salario: R$ " << func[i].getSalario() << endl;
+                
+                    return; // Encerra a função após encontrar
+                }
+            }
+            cout << "Funcionario nao encontrado. \n" << endl; //mensagem de erro
+            break;
         }
+        case 2:{
+            cout << "Digite o nome do funcionario a ser pesquisado: ";
+            scanf(" %[^\n]", nomeFunc);
+            fflush(stdin);
+            for (int i = 0; i < numFuncs; i++){
+                // Verifica se o nome do funcionário atual é igual ao procurado
+                if (strcmp(func[i].getNomeFunc(), nomeFunc) == 0){
+                cout << "Funcionario encontrado! \n" << endl;
+            
+                    // Exibe os dados do funcionário encontrado
+                    cout << "Codigo: " << func[i].getCodigoFunc() << endl;
+                    cout << "Nome: " << func[i].getNomeFunc() << endl;
+                    cout << "Cargo: " << func[i].getCargo() << endl;
+                    cout << "Telefone: " << func[i].getTelFunc() << endl;
+                    cout << "Salario: R$ " << func[i].getSalario() << endl;
+                
+                    return; // Encerra a função após encontrar
+                }
+            }
+            cout << "Funcionario nao encontrado. \n" << endl; //mensagem de erro
+            break;
+        }
+        default:
+            cout << "Opcao invalida. Nenhum dado foi mostrado. \n" << endl;
+            return;
     }
-
     // Caso o funcionário não seja encontrado
     cout << "Funcionario nao encontrado. \n" << endl;
 }
 
 // Função para procurar um cliente pelo código
-void procuraCliente(Cliente *cliente, int numClientes, int codigoCliente){
+void procuraCliente(Cliente *cliente, int numClientes){
     // Percorre o vetor de clientes
-    for (int i = 0; i < numClientes; i++){
-        // Verifica se o código do cliente atual é igual ao procurado
-        if (cliente[i].getCodigoCliente() == codigoCliente){
-            cout << "Cliente encontrado! \n" << endl;
-            
-            // Exibe os dados do cliente encontrado
-            cout << "Codigo: " << cliente[i].getCodigoCliente() << endl;
-            cout << "Nome: " << cliente[i].getNomeCliente() << endl;
-            cout << "Endereco: " << cliente[i].getEndereco() << endl;
-            cout << "Telefone: " << cliente[i].getTelCliente() << endl;
-            cout << "Quarto numero: " << cliente[i].getCodigoCliente() << endl; // aqui mostra o código como número do quarto
-            
-            return; // Encerra a função após encontrar
-        }
-    }
+    int codigoCliente, opcPesquisar;
+    char nomeCliente[99];
+    cout << "[1] Pesquisa por codigo do cliente." << endl;
+    cout << "[2] Pesquisa por nome do cliente." << endl;
+    cout << ">> ";
+    cin >> opcPesquisar;
+    cout << "\n" << endl; // Apenas pula linha para formatação
 
-    // Caso o cliente não seja encontrado
-    cout << "Cliente nao encontrado. \n" << endl;
+    switch(opcPesquisar){
+        case 1:{
+            cout << "Digite o codigo do cliente a ser pesquisado: ";
+            cin >> codigoCliente;
+            for (int i = 0; i < numClientes; i++){
+                // Verifica se o código do cliente atual é igual ao procurado
+                if (cliente[i].getCodigoCliente() == codigoCliente){
+                cout << "Cliente encontrado! \n" << endl;
+            
+                    // Exibe os dados do cliente encontrado
+                    cout << "Codigo: " << cliente[i].getCodigoCliente() << endl;
+                    cout << "Nome: " << cliente[i].getNomeCliente() << endl;
+                    cout << "Endereco: " << cliente[i].getEndereco() << endl;
+                    cout << "Telefone: " << cliente[i].getTelCliente() << endl;
+                
+                    return; // Encerra a função após encontrar
+                }
+            }
+            cout << "Cliente nao encontrado. \n" << endl; //mensagem de erro
+            break;
+        }
+        case 2:{
+            cout << "Digite o nome do cliente a ser pesquisado: ";
+            scanf(" %[^\n]", nomeCliente);
+            fflush(stdin);
+            for (int i = 0; i < numClientes; i++){
+                // Verifica se o nome do cliente atual é igual ao procurado
+                if (strcmp(cliente[i].getNomeCliente(), nomeCliente) == 0){
+                cout << "Cliente encontrado! \n" << endl;
+            
+                    // Exibe os dados do cliente encontrado
+                    cout << "Codigo: " << cliente[i].getCodigoCliente() << endl;
+                    cout << "Nome: " << cliente[i].getNomeCliente() << endl;
+                    cout << "Endereco: " << cliente[i].getEndereco() << endl;
+                    cout << "Telefone: " << cliente[i].getTelCliente() << endl;
+                
+                    return; // Encerra a função após encontrar
+                }
+            }
+            cout << "Cliente nao encontrado. \n" << endl; //mensagem de erro
+            break;
+        }
+        default:
+            cout << "Opcao invalida. Nenhum dado foi mostrado. \n" << endl;
+            return;
+    }
 }
 
 class Quarto{
@@ -456,24 +556,7 @@ class Quarto{
         }
 };
 
-// Função para mostrar todos os quartos cadastrados
-// Apenas para teste
-void mostraQuartos(Quarto *quartos, int numQuartos){
-    cout << "Lista de quartos cadastrados:" << endl;
-
-    // Percorre todos os quartos e exibe suas informações
-    for (int i = 0; i < numQuartos; i++){
-        cout << "Numero do quarto: " << quartos[i].getNumQuarto() << endl;
-        cout << "Quantidade de hospedes: " << quartos[i].getQuantHospedes() << endl;
-
-        // Mostra o status do quarto: "Ocupado" ou "Livre"
-        cout << "Status: " << (quartos[i].getStatus() ? "Ocupado" : "Livre") << endl;
-        cout << "------------------------ \n" << endl; // Separador visual
-    }
-}
-
 // Função para verificar se um cliente existe no sistema
-// Pode ser usada, por exemplo, para checar se o cliente pode fazer check-in
 bool verificaCliente(Cliente *cliente, int numClientes, int codigoCliente){
     // Percorre todos os clientes
     for (int i = 0; i < numClientes; i++){
@@ -538,7 +621,7 @@ class Estadia{
 
         // Função para cadastrar uma estadia
         void cadastrarEstadia(Estadia *estadias, int numEstadias, Quarto *quartos, int numQuartos, Cliente *clientes, int numClientes){    
-            int codCliente, quantHospedes, dataEntrada, dataSaida;
+            int codCliente, quantHospedes, dataEntrada, dataSaida, codEstadia;
 
             // Pede o código do cliente
             cout << "Digite o codigo do cliente: ";
@@ -557,12 +640,16 @@ class Estadia{
             cin >> dataEntrada;
             cout << "Digite a data de saida: ";
             cin >> dataSaida;
+            cout << "Digite o codigo da estadia: ";
+            cin >> codEstadia;
+            cout << "\n" << endl; // Apenas pula linha para formatação
 
             // Procura um quarto disponível com capacidade suficiente
             for (int i = 0; i < numQuartos; i++){
                 if (quartos[i].getQuantHospedes() >= quantHospedes && quartos[i].getStatus() == false){
                     setcodigoCliente(codCliente);
                     setnumQuarto(quartos[i].getNumQuarto());
+                    setcodigoEstadia(codEstadia);
                     setdataEntrada(dataEntrada);
                     setdataSaida(dataSaida);
 
@@ -570,7 +657,9 @@ class Estadia{
                     setnumDiarias(diarias);
 
                     cout << "Estadia cadastrada com sucesso! \n" << endl;
-
+                    cout << "Codigo da estadia: " << getCodigoEstadia() << endl;
+                    cout << "\n" << endl; // Apenas pula linha para formatação
+                    
                     quartos[i].setStatus(true);          // Marca o quarto como ocupado
                     quartos[i].setCodigoCliente(codCliente); // Associa o cliente ao quarto
                     return;
@@ -624,10 +713,7 @@ void baixaEstadia(Estadia *estadias, int &numEstadias){
     cout << "Estadia nao encontrada. Nenhuma baixa realizada. \n" << endl;
 }
 
-void BackupdeDados(Cliente *clientes, int numClientes,
-                   Funcionario *funcionarios, int numFuncs,
-                   Quarto *quartos, int numQuartos,
-                   Estadia *estadias, int numEstadias) {
+void BackupdeDados(Cliente *clientes, int numClientes, Funcionario *funcionarios, int numFuncs, Quarto *quartos, int numQuartos, Estadia *estadias, int numEstadias) {
     
     // --- Backup de Clientes ---
     ofstream backupClientes("clientes.bin", ios::binary); //ofstream eh como se fosse uma caneta, ela qm escreve
@@ -680,10 +766,7 @@ void BackupdeDados(Cliente *clientes, int numClientes,
     cout << "Backup de todos os dados realizado com sucesso! \n" << endl;
 }
 
-void RestaurarDados(Cliente *&clientes, int &numClientes,
-                    Funcionario *&funcionarios, int &numFuncs,
-                    Quarto *&quartos, int &numQuartos,
-                    Estadia *&estadias, int &numEstadias) {
+void RestaurarDados(Cliente *&clientes, int &numClientes, Funcionario *&funcionarios, int &numFuncs, Quarto *&quartos, int &numQuartos, Estadia *&estadias, int &numEstadias) {
 
     // --- Restaurar Clientes ---
     ifstream backupClientes("clientes.bin", ios::binary);
@@ -780,8 +863,10 @@ void mostraEstadias(Estadia *estadias, int numEstadias){
                     cout << "Nome do cliente: " << estadias[i].getNomeCliente() << endl;
                     cout << "Codigo do cliente: " << estadias[i].getCodigoCliente() << endl;
                     cout << "Numero do quarto: " << estadias[i].getNumQuarto() << endl;
+                    return; // Sai da função após encontrar
                 }
             }
+            cout << "Cliente nao possui estadias cadastradas. \n" << endl;
             break;
         }
         case 2:{
@@ -799,8 +884,10 @@ void mostraEstadias(Estadia *estadias, int numEstadias){
                     cout << "Nome do cliente: " << estadias[i].getNomeCliente() << endl;
                     cout << "Codigo do cliente: " << estadias[i].getCodigoCliente() << endl;
                     cout << "Numero do quarto: " << estadias[i].getNumQuarto() << endl;
+                    return; // Sai da função após encontrar
                 }
             }
+            cout << "Cliente nao possui estadias cadastradas. \n" << endl;
             break;
         }
         default:
@@ -861,16 +948,27 @@ int main() {
 
                 if (opc2 == 1){
                     // Cadastro de cliente
-                    int codCliente, telCliente;
+                    int codCliente;
+                    long long int telCliente;
                     char nomeCliente[99], end[99];
                     cout << "Digite o codigo do cliente: ";
                     cin >> codCliente;
+                    if (codCliente <= 0){
+                        cout << "Codigo invalido. Cadastro nao realizado. \n" << endl;
+                        break;
+                    }
                     cout << "Digite o nome do cliente: ";
-                    scanf(" %[^\n]", nomeCliente);   
+                    scanf(" %[^\n]", nomeCliente);
+                    fflush(stdin);
                     cout << "Digite o endereco do cliente: ";
-                    scanf(" %[^\n]", end);         
+                    scanf(" %[^\n]", end);    
+                    fflush(stdin);     
                     cout << "Digite o telefone do cliente: ";
                     cin >> telCliente;
+                    if (!validaTelefone(telCliente)){
+                        cout << "Telefone invalido. Cadastro nao realizado. \n" << endl;
+                        break;
+                    }
 
                     Cliente novoCliente;
                     novoCliente.cadastraCliente(clientes, numClientes, codCliente, nomeCliente, end, telCliente);
@@ -913,19 +1011,34 @@ int main() {
 
                 if (opcFunc == 1){
                     // Cadastro de funcionário
-                    int codFunc, telFunc;
+                    int codFunc; 
+                    long long int telFunc;
                     char nomeFunc[99], cargo[30];
                     float salario;
                     cout << "Digite o codigo do funcionario: ";
                     cin >> codFunc;
+                    if (codFunc <= 0){
+                        cout << "Codigo invalido. Cadastro nao realizado. \n" << endl;
+                        break;
+                    }
                     cout << "Digite o nome do funcionario: ";
                     scanf(" %[^\n]", nomeFunc);
+                    fflush(stdin);
                     cout << "Digite o cargo do funcionario: ";
                     scanf(" %[^\n]", cargo);
+                    fflush(stdin);
                     cout << "Digite o telefone do funcionario: ";
                     cin >> telFunc;
+                    if (!validaTelefone(telFunc)){
+                        cout << "Telefone invalido. Cadastro nao realizado. \n" << endl;
+                        break;
+                    }
                     cout << "Digite o salario do funcionario: ";
                     cin >> salario;
+                    if (salario < 0) {
+                        cout << "Salario invalido. Cadastro nao realizado. \n" << endl;
+                        break;
+                    }
 
                     Funcionario novoFunc;
                     novoFunc.cadastraFunc(funcionarios, numFuncionarios, codFunc, nomeFunc, cargo, telFunc, salario);
@@ -957,8 +1070,16 @@ int main() {
                 bool status = false; // quarto inicia como livre
                 cout << "Digite o numero do quarto: ";
                 cin >> numeroQuarto;
+                if (numeroQuarto <= 0){
+                    cout << "Numero de quarto invalido. Cadastro nao realizado. \n" << endl;
+                    break;
+                }
                 cout << "Digite a capacidade de hospedes: ";
                 cin >> quantHospedes;
+                if (quantHospedes <= 0){
+                    cout << "Capacidade invalida. Cadastro nao realizado. \n" << endl;
+                    break;
+                }
 
                 Quarto novoQuarto;
                 novoQuarto.cadastraQuarto(quartos, numQuartos, numeroQuarto, quantHospedes, status);
@@ -1000,18 +1121,12 @@ int main() {
 
                 if (opcPesquisar == 1){
                     // Pesquisar cliente
-                    int codClientePesquisar;
-                    cout << "Digite o codigo do cliente a ser pesquisado: ";
-                    cin >> codClientePesquisar;
-                    procuraCliente(clientes, numClientes, codClientePesquisar);
+                    procuraCliente(clientes, numClientes);
                     break;
                 }
                 else {
                     // Pesquisar funcionário
-                    int codFuncPesquisar;
-                    cout << "Digite o codigo do funcionario a ser pesquisado: ";
-                    cin >> codFuncPesquisar;
-                    procuraFuncionario(funcionarios, numFuncionarios, codFuncPesquisar);
+                    procuraFuncionario(funcionarios, numFuncionarios);
                     break;
                 }
                 break;
