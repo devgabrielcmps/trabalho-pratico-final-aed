@@ -73,12 +73,21 @@ class Cliente{
                 cout << "Codigo de cliente ja existe. Cadastro nao realizado. \n" << endl;
                 return;
             }
-            else{
+
+
+            else {
+                for (int i = 0; i < numDeClientes; i++){
+                    if (cliente[i].getNomeCliente() == nomeCliente){
+                        cout << "Nome de cliente ja existe. Cadastro nao realizado. \n" << endl;
+                        return;
+                    }
+                }
                 setCodigoCliente(codCliente);
                 setNomeCliente(nomeCliente);
                 setEndereco(end);
                 setTelCliente(telCliente);
                 cout << "Cliente cadastrado com sucesso! \n" << endl;
+                return;
             }
         }
 };
@@ -155,23 +164,31 @@ class Funcionario{
                 return;
             }
             else{
+                for (int i = 0; i < numFuncionarios; i++){
+                    if (funcionarios[i].getNomeFunc() == nomeFunc){
+                        cout << "Nome de funcionario ja existe. Cadastro nao realizado. \n" << endl;
+                        return;
+                    }
+                }
                 setCodigoFunc(codFunc);
                 setNomeFunc(nomeFunc);
                 setCargo(cargo);
                 setTelFunc(telFunc);
                 setSalario(salario);
                 cout << "Funcionario cadastrado com sucesso! \n" << endl;
+                return;
             }            
         }
 };
 
 bool validaTelefone(long long int tel){
+    //contador de digitos para o telefone
     int contador = 0;
     while (tel != 0){
         tel /= 10;
         contador++;
     }
-    if (contador >= 8 && contador <= 15){
+    if (contador >= 8 && contador <= 11){
         return true;
     }
     else{
@@ -287,6 +304,10 @@ void editaFuncionario(Funcionario *func, int numFuncs, int codigoFunc){
                     float novoSalario;
                     cout << "Digite o novo salario: ";
                     cin >> novoSalario;
+                    if (novoSalario <= 0.0){
+                        cout << "Salario invalido. Nenhum dado foi alterado. \n" << endl;
+                        return;
+                    }
                     func[i].setSalario(novoSalario);
                     cout << "Salario atualizado com sucesso! \n" << endl;
                     break;
@@ -573,8 +594,12 @@ bool verificaCliente(Cliente *cliente, int numClientes, int codigoCliente){
 class Estadia{
     private:
         int codigoEstadia;     // Código único da estadia
-        int dataEntrada;       // Data de entrada (pode ser formato numérico, ex: YYYYMMDD)
-        int dataSaida;         // Data de saída
+        int diaDataEntrada;       // Data de entrada (pode ser formato numérico, ex: YYYYMMDD)
+        int mesDataEntrada;      // Mês de entrada
+        int anoDataEntrada;      // Ano de entrada
+        int diaDataSaida;         // Data de saída
+        int mesDataSaida;        // Mês de saída
+        int anoDataSaida;       // Ano de saída
         int numDiarias;        // Quantidade de diárias
         int codigoCliente;     // Código do cliente associado à estadia
         int quantHospedes;     // Número de hóspedes para a estadia (puxado do quarto)
@@ -582,9 +607,13 @@ class Estadia{
 
     public:
         // Getters: retornam os dados privados
-        int getCodigoEstadia(){return codigoEstadia;};
-        int getDataEntrda(){return dataEntrada;}; // pequeno typo: "getDataEntrda" deveria ser getDataEntrada
-        int getDataSaida(){return dataSaida;};
+        int getCodigoEstadia(){return codigoEstadia;}; 
+        int getdiaDtaEntrada(){return diaDataEntrada;};
+        int getmesDtaEntrada(){return mesDataEntrada;};
+        int getanoDtaEntrada(){return anoDataEntrada;};
+        int getdiaDtaSaida(){return diaDataSaida;};
+        int getmesDtaSaida(){return mesDataSaida;};
+        int getanoDtaSaida(){return anoDataSaida;};
         int getNumDiarias(){return numDiarias;};
         int getCodigoCliente(){return codigoCliente;};
         int getNumQuarto(){return quantHospedes;};
@@ -595,13 +624,21 @@ class Estadia{
             if (a > 0)
                 codigoEstadia = a;
         }
-        void setdataEntrada(int b){
-            if (b > 0)
-                dataEntrada = b;
+        void setdataEntrada(int b, int c, int d){
+            if (b > 0 && b <= 31)
+                diaDataEntrada = b;
+            if (c > 0 && c <= 12)
+                mesDataEntrada = c;
+            if (d > 0)
+                anoDataEntrada = d;
         }
-        void setdataSaida(int c){
-            if (c > 0)
-                dataSaida = c;
+        void setdataSaida(int e, int f, int g){
+            if (e > 0 && e <= 31)
+                diaDataSaida = e;
+            if (f > 0 && f <= 12)
+                mesDataSaida = f;
+            if (g > 0)
+                anoDataSaida = g;
         }
         void setnumDiarias(int d){
             if (d > 0)
@@ -621,7 +658,9 @@ class Estadia{
 
         // Função para cadastrar uma estadia
         void cadastrarEstadia(Estadia *estadias, int numEstadias, Quarto *quartos, int numQuartos, Cliente *clientes, int numClientes){    
-            int codCliente, quantHospedes, dataEntrada, dataSaida, codEstadia;
+            int codCliente, quantHospedes, codEstadia;
+            int diaEntrada, mesEntrada, anoEntrada;
+            int diaSaida, mesSaida, anoSaida;
 
             // Pede o código do cliente
             cout << "Digite o codigo do cliente: ";
@@ -636,12 +675,24 @@ class Estadia{
             // Solicita dados da estadia
             cout << "Digite a quantidade de hospedes: ";
             cin >> quantHospedes;
-            cout << "Digite a data de entrada: ";
-            cin >> dataEntrada;
-            cout << "Digite a data de saida: ";
-            cin >> dataSaida;
             cout << "Digite o codigo da estadia: ";
             cin >> codEstadia;
+            cout << "\n" << endl; // Apenas pula linha para formatação
+
+            // Solicita a data de entrada e saída   
+            cout << "Digite a data de entrada (DD MM AAAA): ";  
+            cin >> diaEntrada >> mesEntrada >> anoEntrada;
+            cout << "Digite a data de saida (DD MM AAAA): ";   
+            cin >> diaSaida >> mesSaida >> anoSaida;
+            // Calcula a diferença em dias entre as duas datas
+            int diasEntrada = diaEntrada + mesEntrada * 30 + anoEntrada * 365;
+            int diasSaida = diaSaida + mesSaida * 30 + anoSaida * 365;
+            int diferenca = diasSaida - diasEntrada;
+            // Verifica se a diferença é válida
+            if (diferenca <= 0){
+            cout << "Data de saida invalida. \n" << endl;  
+            return;
+            }
             cout << "\n" << endl; // Apenas pula linha para formatação
 
             // Procura um quarto disponível com capacidade suficiente
@@ -650,8 +701,8 @@ class Estadia{
                     setcodigoCliente(codCliente);
                     setnumQuarto(quartos[i].getNumQuarto());
                     setcodigoEstadia(codEstadia);
-                    setdataEntrada(dataEntrada);
-                    setdataSaida(dataSaida);
+                    setdataEntrada(diaEntrada, mesEntrada, anoEntrada);
+                    setdataSaida(diaSaida, mesSaida, anoSaida);
 
                     for (int j = 0; j < numClientes; j++){
                         // Copia o nome do cliente para a estadia
@@ -660,9 +711,7 @@ class Estadia{
                             break;
                         }
                     }
-
-                    int diarias = dataSaida - dataEntrada; // Calcula o número de diárias
-                    setnumDiarias(diarias);
+                    setnumDiarias(diferenca);
 
                     cout << "Estadia cadastrada com sucesso! \n" << endl;
                     cout << "Codigo da estadia: " << getCodigoEstadia() << endl;
@@ -875,8 +924,8 @@ void mostraEstadias(Estadia *estadias, int numEstadias){
                 if (estadias[i].getCodigoCliente() == codigoCliente){
                     cout << "Estadia encontrada!" << endl;
                     cout << "Codigo da estadia: " << estadias[i].getCodigoEstadia() << endl;
-                    cout << "Data de entrada: " << estadias[i].getDataEntrda() << endl;
-                    cout << "Data de saida: " << estadias[i].getDataSaida() << endl;
+                    cout << "Data de entrada: " << estadias[i].getdiaDtaEntrada() << "/" << estadias[i].getmesDtaEntrada() << "/" << estadias[i].getanoDtaEntrada() << endl;
+                    cout << "Data de saida: " << estadias[i].getdiaDtaSaida() << "/" << estadias[i].getmesDtaSaida() << "/" << estadias[i].getanoDtaSaida() << endl;
                     cout << "Numero de diarias: " << estadias[i].getNumDiarias() << endl;
                     cout << "Nome do cliente: " << estadias[i].getNomeCliente() << endl;
                     cout << "Codigo do cliente: " << estadias[i].getCodigoCliente() << endl;
@@ -896,8 +945,8 @@ void mostraEstadias(Estadia *estadias, int numEstadias){
                 if (strcmp(estadias[i].getNomeCliente(), nomeClienteBusca) == 0){
                     cout << "Estadia encontrada!" << endl;
                     cout << "Codigo da estadia: " << estadias[i].getCodigoEstadia() << endl;
-                    cout << "Data de entrada: " << estadias[i].getDataEntrda() << endl;
-                    cout << "Data de saida: " << estadias[i].getDataSaida() << endl;
+                    cout << "Data de entrada: " << estadias[i].getdiaDtaEntrada() << "/" << estadias[i].getmesDtaEntrada() << "/" << estadias[i].getanoDtaEntrada() << endl;
+                    cout << "Data de saida: " << estadias[i].getdiaDtaSaida() << "/" << estadias[i].getmesDtaSaida() << "/" << estadias[i].getanoDtaSaida() << endl;
                     cout << "Numero de diarias: " << estadias[i].getNumDiarias() << endl;
                     cout << "Nome do cliente: " << estadias[i].getNomeCliente() << endl;
                     cout << "Codigo do cliente: " << estadias[i].getCodigoCliente() << endl;
@@ -1053,7 +1102,7 @@ int main() {
                     }
                     cout << "Digite o salario do funcionario: ";
                     cin >> salario;
-                    if (salario < 0) {
+                    if (salario <= 0) {
                         cout << "Salario invalido. Cadastro nao realizado. \n" << endl;
                         break;
                     }
