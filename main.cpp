@@ -77,7 +77,7 @@ class Cliente{
 
             else {
                 for (int i = 0; i < numDeClientes; i++){
-                    if (cliente[i].getNomeCliente() == nomeCliente){
+                    if (strcmp(cliente[i].getNomeCliente(), nomeCliente) == 0){
                         cout << "Nome de cliente ja existe. Cadastro nao realizado. \n" << endl;
                         return;
                     }
@@ -165,7 +165,7 @@ class Funcionario{
             }
             else{
                 for (int i = 0; i < numFuncionarios; i++){
-                    if (funcionarios[i].getNomeFunc() == nomeFunc){
+                    if (strcmp(funcionarios[i].getNomeFunc(),nomeFunc) == 0){
                         cout << "Nome de funcionario ja existe. Cadastro nao realizado. \n" << endl;
                         return;
                     }
@@ -196,61 +196,45 @@ bool validaTelefone(long long int tel){
     }
 }
 
-void deletaFuncionario(Funcionario *func, int &numFuncs, int codigofunc){
-    int index = -1; // posição onde o funcionário será encontrado
+//funcao para validar telefone
+//para ter certeza de que nao tera overflow no long long int e potencialmente quebre o programa
+long long int inputTelefone(){
+    char input[15];
+    long long int tel = 0;
 
-    // Procura o funcionário pelo código
-    for (int i = 0; i < numFuncs; i++){
-        if (func[i].getCodigoFunc() == codigofunc){ 
-            index = i;   // guarda a posição do funcionário
-            break;
+    try{
+        cout << "Digite o telefone (apenas numeros): ";
+        scanf(" %[^\n]", input);
+        fflush(stdin);
+
+        //checa se todos os caracteres sao apenas numeros
+        for (int i = 0; i < strlen(input); i++){
+            if (input[i] < '0' || input[i] > '9'){
+                throw invalid_argument("Telefone invalido. Deve conter apenas numeros.");
+            }
+            
+            //converte o char para long long int
+            //usa tabela ASCII para converter
+            tel = tel * 10 + (input[i] - '0');
         }
+
+        //valida o tamanho do telefone 
+        if (!validaTelefone(tel)){
+            throw out_of_range("Telefone invalido. Deve conter entre 8 e 11 digitos.");
+        }
+
+        return tel;
+    }
+    catch (const invalid_argument &e){
+        cout << e.what() << " \n" << endl;
+        return -1;
     }
 
-    // Se encontrou o funcionário
-    if (index != -1){
-        // Move todos os elementos depois dele uma posição para trás
-        for (int j = index; j < numFuncs - 1; j++){
-            func[j] = func[j + 1];
-        }
-
-        --numFuncs; // diminui o total de funcionários
-        cout << "Funcionario deletado com sucesso! \n" << endl;
-    }
-    else{
-        // Caso o código não exista no vetor
-        cout << "Funcionario nao encontrado. \n" << endl;
+    catch(const out_of_range &e){
+        cout << e.what() << " \n" << endl;
+        return -1;
     }
 }
-
-
-void deletaCliente(Cliente *cliente, int &numClientes, int codigoCliente){
-    int index = -1; // posição onde o cliente será encontrado
-
-    // Procura o cliente pelo código
-    for (int i = 0; i < numClientes; i++){
-        if (cliente[i].getCodigoCliente() == codigoCliente){
-            index = i; // guarda a posição do cliente
-            break;
-        }
-    }
-
-    // Se encontrou o cliente
-    if (index != -1){
-        // Move todos os clientes após o removido uma posição para trás
-        for (int j = index; j < numClientes - 1; j++){
-            cliente[j] = cliente[j + 1];
-        }
-
-        --numClientes; // diminui o total de clientes
-        cout << "Cliente deletado com sucesso! \n" << endl;
-    }
-    else{
-        // Caso o código não exista
-        cout << "Cliente nao encontrado. \n" << endl;
-    }
-}
-
     
 void editaFuncionario(Funcionario *func, int numFuncs, int codigoFunc){
     int opcEditar;
@@ -290,10 +274,9 @@ void editaFuncionario(Funcionario *func, int numFuncs, int codigoFunc){
                 }
                 case 3:{ // Edita telefone
                     long long int novoTel;
-                    cout << "Digite o novo telefone: ";
-                    cin >> novoTel;
-                    if (!validaTelefone(novoTel)){
-                        cout << "Telefone invalido. Nenhum dado foi alterado. \n" << endl;
+                    novoTel = inputTelefone();
+                    if(novoTel == -1){
+                        cout << "Cadastro nao realizado. \n" << endl;
                         return;
                     }
                     func[i].setTelFunc(novoTel);
@@ -362,10 +345,9 @@ void editaCliente(Cliente *cliente, int numClientes, int codigoCliente){
                 }
                 case 3:{ // Editar telefone
                     long long int novoTel;
-                    cout << "Digite o novo telefone: ";
-                    cin >> novoTel;
-                    if (!validaTelefone(novoTel)){
-                        cout << "Telefone invalido. Nenhum dado foi alterado. \n" << endl;
+                    novoTel = inputTelefone();
+                    if (novoTel == -1){
+                        cout << "Cadastro nao realizado. \n" << endl;
                         return;
                     }
                     cliente[i].setTelCliente(novoTel);
@@ -601,9 +583,8 @@ class Estadia{
         int mesDataSaida;        // Mês de saída
         int anoDataSaida;       // Ano de saída
         int numDiarias;        // Quantidade de diárias
-        int codigoCliente;     // Código do cliente associado à estadia
-        int quantHospedes;     // Número de hóspedes para a estadia (puxado do quarto)
-        char nomeCliente[99];  // Nome do cliente (copiado da classe Cliente)
+        Cliente *cliente;        // Cliente associado à estadia
+        Quarto *quarto;          // Quarto associado à estadia
 
     public:
         // Getters: retornam os dados privados
@@ -615,9 +596,10 @@ class Estadia{
         int getmesDtaSaida(){return mesDataSaida;};
         int getanoDtaSaida(){return anoDataSaida;};
         int getNumDiarias(){return numDiarias;};
-        int getCodigoCliente(){return codigoCliente;};
-        int getNumQuarto(){return quantHospedes;};
-        char *getNomeCliente(){return nomeCliente;};
+        int getCodigoCliente(){return cliente->getCodigoCliente();};
+        int getNumQuarto(){return quarto->getNumQuarto();};
+        Cliente *getCliente(){return cliente;};
+        Quarto *getQuarto(){return quarto;};
 
         // Setters: alteram os dados privados
         void setcodigoEstadia(int a){
@@ -644,18 +626,13 @@ class Estadia{
             if (d > 0)
                 numDiarias = d;
         }
-        void setcodigoCliente(int e){
-            if (e > 0)
-                codigoCliente = e;
-        }
-        void setnumQuarto(int f){
-            if (f > 0)
-                quantHospedes = f;
-        }
-        void setnomeCliente(char g[99]){
-            strcpy(nomeCliente, g);
+        void setCliente(Cliente *c){
+            cliente = c;
         }
 
+        void setQuarto(Quarto *q){
+            quarto = q;
+        }
         // Função para cadastrar uma estadia
         void cadastrarEstadia(Estadia *estadias, int numEstadias, Quarto *quartos, int numQuartos, Cliente *clientes, int numClientes){    
             int codCliente, quantHospedes, codEstadia;
@@ -684,47 +661,63 @@ class Estadia{
             cin >> diaEntrada >> mesEntrada >> anoEntrada;
             cout << "Digite a data de saida (DD MM AAAA): ";   
             cin >> diaSaida >> mesSaida >> anoSaida;
+
             // Calcula a diferença em dias entre as duas datas
             int diasEntrada = diaEntrada + mesEntrada * 30 + anoEntrada * 365;
             int diasSaida = diaSaida + mesSaida * 30 + anoSaida * 365;
             int diferenca = diasSaida - diasEntrada;
+
             // Verifica se a diferença é válida
             if (diferenca <= 0){
-            cout << "Data de saida invalida. \n" << endl;  
-            return;
+                cout << "Data de saida invalida. \n" << endl;  
+                return;
             }
             cout << "\n" << endl; // Apenas pula linha para formatação
+
+            Cliente *clienteEncontrado = NULL;
+            Quarto *quartoLivre = NULL;
 
             // Procura um quarto disponível com capacidade suficiente
             for (int i = 0; i < numQuartos; i++){
                 if (quartos[i].getQuantHospedes() >= quantHospedes && quartos[i].getStatus() == false){
-                    setcodigoCliente(codCliente);
-                    setnumQuarto(quartos[i].getNumQuarto());
-                    setcodigoEstadia(codEstadia);
-                    setdataEntrada(diaEntrada, mesEntrada, anoEntrada);
-                    setdataSaida(diaSaida, mesSaida, anoSaida);
-
-                    for (int j = 0; j < numClientes; j++){
-                        // Copia o nome do cliente para a estadia
-                        if (clientes[j].getCodigoCliente() == codCliente){
-                            setnomeCliente(clientes[j].getNomeCliente());
-                            break;
-                        }
-                    }
-                    setnumDiarias(diferenca);
-
-                    cout << "Estadia cadastrada com sucesso! \n" << endl;
-                    cout << "Codigo da estadia: " << getCodigoEstadia() << endl;
-                    cout << "\n" << endl; // Apenas pula linha para formatação
-                    
-                    quartos[i].setStatus(true);          // Marca o quarto como ocupado
-                    quartos[i].setCodigoCliente(codCliente); // Associa o cliente ao quarto
-                    return;
+                    quartoLivre = &quartos[i];
+                    break;
                 }
             }
 
+            if (quartoLivre == NULL) {
+                cout << "Nao ha quartos disponiveis para a quantidade de hospedes desejada. Cadastro de estadia nao realizado. \n" << endl;
+                return;
+            }
+
+            // Busca a referência do cliente (já verificamos que ele existe)
+            for (int j = 0; j < numClientes; j++){
+                if (clientes[j].getCodigoCliente() == codCliente){
+                    clienteEncontrado = &clientes[j];
+                    break;
+                }
+            }
+            // Se o cliente foi encontrado e o quarto é válido:
+            if (clienteEncontrado != NULL){
+                setcodigoEstadia(codEstadia);
+                setdataEntrada(diaEntrada, mesEntrada, anoEntrada);
+                setdataSaida(diaSaida, mesSaida, anoSaida);
+                setnumDiarias(diferenca);
+
+                setCliente(clienteEncontrado);
+                setQuarto(quartoLivre);
+
+                cout << "Estadia cadastrada com sucesso! \n" << endl;
+                cout << "Codigo da estadia: " << getCodigoEstadia() << endl;
+                cout << "\n" << endl; 
+                
+                // Marca o quarto como ocupado e associa o cliente
+                quartoLivre->setStatus(true);
+                quartoLivre->setCodigoCliente(codCliente);
+                return;
+            }
             // Caso não haja quartos disponíveis
-            cout << "Nao ha quartos disponiveis para a quantidade de hospedes desejada. Cadastro de estadia nao realizado. \n" << endl;
+            cout << "Nao ha quartos disponiveis para a quantidade de hospedes desejada. Cadastro de estadia nao realizado. \n" << endl;   
         }
 
         // Função para adicionar uma nova estadia ao vetor dinâmico
@@ -737,7 +730,7 @@ class Estadia{
             p[num] = novaEstadia;
             num++;
         }
-};
+    };
 
 
 // Função para dar baixa em uma estadia (check-out)
@@ -780,125 +773,6 @@ void baixaEstadia(Estadia *estadias, int &numEstadias, Quarto *quartos, int numQ
     cout << "Estadia nao encontrada. Nenhuma baixa realizada. \n" << endl;
 }
 
-void BackupdeDados(Cliente *clientes, int numClientes, Funcionario *funcionarios, int numFuncs, Quarto *quartos, int numQuartos, Estadia *estadias, int numEstadias) {
-    
-    // --- Backup de Clientes ---
-    ofstream backupClientes("clientes.bin", ios::binary); //ofstream eh como se fosse uma caneta, ela qm escreve
-    if (!backupClientes.is_open()) {
-        cout << "Erro ao criar arquivo de backup de clientes. \n" << endl;
-    } else {
-        backupClientes.write((char*)&numClientes, sizeof(int));
-        for (int i = 0; i < numClientes; i++) {
-            backupClientes.write((char*)&clientes[i], sizeof(Cliente));
-        }
-        backupClientes.close();
-    }
-
-    // --- Backup de Funcionários ---
-    ofstream backupFuncionarios("funcionarios.bin", ios::binary);
-    if (!backupFuncionarios.is_open()) {
-        cout << "Erro ao criar arquivo de backup de funcionarios." << endl;
-    } else {
-        backupFuncionarios.write((char*)&numFuncs, sizeof(int));
-        for (int i = 0; i < numFuncs; i++) {
-            backupFuncionarios.write((char*)&funcionarios[i], sizeof(Funcionario));
-        }
-        backupFuncionarios.close();
-    }
-
-    // --- Backup de Quartos ---
-    ofstream backupQuartos("quartos.bin", ios::binary);
-    if (!backupQuartos.is_open()) {
-        cout << "Erro ao criar arquivo de backup de quartos. \n" << endl;
-    } else {
-        backupQuartos.write((char*)&numQuartos, sizeof(int));
-        for (int i = 0; i < numQuartos; i++) {
-            backupQuartos.write((char*)&quartos[i], sizeof(Quarto));
-        }
-        backupQuartos.close();
-    }
-
-    // --- Backup de Estadias ---
-    ofstream backupEstadias("estadias.bin", ios::binary);
-    if (!backupEstadias.is_open()) {
-        cout << "Erro ao criar arquivo de backup de estadias. \n" << endl;
-    } else {
-        backupEstadias.write((char*)&numEstadias, sizeof(int));
-        for (int i = 0; i < numEstadias; i++) {
-            backupEstadias.write((char*)&estadias[i], sizeof(Estadia));
-        }
-        backupEstadias.close();
-    }
-
-    cout << "Backup de todos os dados realizado com sucesso! \n" << endl;
-}
-
-void RestaurarDados(Cliente *&clientes, int &numClientes, Funcionario *&funcionarios, int &numFuncs, Quarto *&quartos, int &numQuartos, Estadia *&estadias, int &numEstadias) {
-
-    // --- Restaurar Clientes ---
-    ifstream backupClientes("clientes.bin", ios::binary);
-    if (!backupClientes.is_open()) {
-        cout << "Erro ao abrir arquivo de clientes." << endl;
-        numClientes = 0;
-        clientes = nullptr;
-    } else {
-        backupClientes.read((char*)&numClientes, sizeof(int));
-        clientes = new Cliente[numClientes];
-        for (int i = 0; i < numClientes; i++) {
-            backupClientes.read((char*)&clientes[i], sizeof(Cliente));
-        }
-        backupClientes.close();
-    }
-
-    // --- Restaurar Funcionários ---
-    ifstream backupFuncionarios("funcionarios.bin", ios::binary);
-    if (!backupFuncionarios.is_open()) {
-        cout << "Erro ao abrir arquivo de funcionarios." << endl;
-        numFuncs = 0;
-        funcionarios = nullptr;
-    } else {
-        backupFuncionarios.read((char*)&numFuncs, sizeof(int));
-        funcionarios = new Funcionario[numFuncs];
-        for (int i = 0; i < numFuncs; i++) {
-            backupFuncionarios.read((char*)&funcionarios[i], sizeof(Funcionario));
-        }
-        backupFuncionarios.close();
-    }
-
-    // --- Restaurar Quartos ---
-    ifstream backupQuartos("quartos.bin", ios::binary);
-    if (!backupQuartos.is_open()) {
-        cout << "Erro ao abrir arquivo de quartos. \n" << endl;
-        numQuartos = 0;
-        quartos = nullptr;
-    } else {
-        backupQuartos.read((char*)&numQuartos, sizeof(int));
-        quartos = new Quarto[numQuartos];
-        for (int i = 0; i < numQuartos; i++) {
-            backupQuartos.read((char*)&quartos[i], sizeof(Quarto));
-        }
-        backupQuartos.close();
-    }
-
-    // --- Restaurar Estadias ---
-    ifstream backupEstadias("estadias.bin", ios::binary);
-    if (!backupEstadias.is_open()) {
-        cout << "Erro ao abrir arquivo de estadias. \n" << endl;
-        numEstadias = 0;
-        estadias = nullptr;
-    } else {
-        backupEstadias.read((char*)&numEstadias, sizeof(int));
-        estadias = new Estadia[numEstadias];
-        for (int i = 0; i < numEstadias; i++) {
-            backupEstadias.read((char*)&estadias[i], sizeof(Estadia));
-        }
-        backupEstadias.close();
-    }
-
-    cout << "Restauracao de todos os dados concluida! \n" << endl;
-}
-
-
 //procedimento para mostrar as estadias cadastradas de um cliente especifico
 // Função para mostrar estadias cadastradas
 // Permite filtrar por código do cliente ou por nome do cliente
@@ -927,9 +801,9 @@ void mostraEstadias(Estadia *estadias, int numEstadias){
                     cout << "Data de entrada: " << estadias[i].getdiaDtaEntrada() << "/" << estadias[i].getmesDtaEntrada() << "/" << estadias[i].getanoDtaEntrada() << endl;
                     cout << "Data de saida: " << estadias[i].getdiaDtaSaida() << "/" << estadias[i].getmesDtaSaida() << "/" << estadias[i].getanoDtaSaida() << endl;
                     cout << "Numero de diarias: " << estadias[i].getNumDiarias() << endl;
-                    cout << "Nome do cliente: " << estadias[i].getNomeCliente() << endl;
+                    cout << "Nome do cliente: " << estadias[i].getCliente()->getNomeCliente() << endl;
                     cout << "Codigo do cliente: " << estadias[i].getCodigoCliente() << endl;
-                    cout << "Numero do quarto: " << estadias[i].getNumQuarto() << endl;
+                    cout << "Numero do quarto: " << estadias[i].getQuarto()->getNumQuarto() << endl;
                     return; // Sai da função após encontrar
                 }
             }
@@ -942,15 +816,15 @@ void mostraEstadias(Estadia *estadias, int numEstadias){
             scanf(" %[^\n]", nomeClienteBusca);
 
             for (int i = 0; i < numEstadias; i++){
-                if (strcmp(estadias[i].getNomeCliente(), nomeClienteBusca) == 0){
+                if (strcmp(estadias[i].getCliente()->getNomeCliente(), nomeClienteBusca) == 0){
                     cout << "Estadia encontrada!" << endl;
                     cout << "Codigo da estadia: " << estadias[i].getCodigoEstadia() << endl;
                     cout << "Data de entrada: " << estadias[i].getdiaDtaEntrada() << "/" << estadias[i].getmesDtaEntrada() << "/" << estadias[i].getanoDtaEntrada() << endl;
                     cout << "Data de saida: " << estadias[i].getdiaDtaSaida() << "/" << estadias[i].getmesDtaSaida() << "/" << estadias[i].getanoDtaSaida() << endl;
                     cout << "Numero de diarias: " << estadias[i].getNumDiarias() << endl;
-                    cout << "Nome do cliente: " << estadias[i].getNomeCliente() << endl;
+                    cout << "Nome do cliente: " << estadias[i].getCliente()->getNomeCliente() << endl;
                     cout << "Codigo do cliente: " << estadias[i].getCodigoCliente() << endl;
-                    cout << "Numero do quarto: " << estadias[i].getNumQuarto() << endl;
+                    cout << "Numero do quarto: " << estadias[i].getQuarto()->getNumQuarto() << endl;
                     return; // Sai da função após encontrar
                 }
             }
@@ -961,6 +835,215 @@ void mostraEstadias(Estadia *estadias, int numEstadias){
             // Caso a opção digitada seja inválida
             cout << "Opcao invalida. Nenhum dado foi mostrado. \n" << endl;
     }
+}
+//funções auxiliares de busca para restauracao de dados
+//necessarias para reconectar/restaurar os ponteiros na volta
+Cliente* encontraClientePorCodigo(Cliente *clientes, int numClientes, int cod) {
+    for (int i = 0; i < numClientes; i++) {
+        if (clientes[i].getCodigoCliente() == cod) return &clientes[i];
+    }
+    return NULL;
+}
+
+Quarto* encontraQuartoPorNumero(Quarto *quartos, int numQuartos, int num) {
+    for (int i = 0; i < numQuartos; i++) {
+        if (quartos[i].getNumQuarto() == num) return &quartos[i];
+    }
+    return NULL;
+}
+
+//faz backup (salva codigo do cliente e numero do quarto)
+void fazerBackup(Cliente *clientes, int numClientes, Funcionario *funcionarios, int numFuncionarios, 
+                 Quarto *quartos, int numQuartos, Estadia *estadias, int numEstadias) {
+    
+    //clientes
+    FILE *fClientes = fopen("clientes.bin", "wb");
+    if (fClientes) {
+        fwrite(&numClientes, sizeof(int), 1, fClientes);
+        if (numClientes > 0) fwrite(clientes, sizeof(Cliente), numClientes, fClientes);
+        fclose(fClientes);
+    }
+
+    //funcionários
+    FILE *fFuncs = fopen("funcionarios.bin", "wb");
+    if (fFuncs) {
+        fwrite(&numFuncionarios, sizeof(int), 1, fFuncs);
+        if (numFuncionarios > 0) fwrite(funcionarios, sizeof(Funcionario), numFuncionarios, fFuncs);
+        fclose(fFuncs);
+    }
+
+    //quartos
+    FILE *fQuartos = fopen("quartos.bin", "wb");
+    if (fQuartos) {
+        fwrite(&numQuartos, sizeof(int), 1, fQuartos);
+        if (numQuartos > 0) fwrite(quartos, sizeof(Quarto), numQuartos, fQuartos);
+        fclose(fQuartos);
+    }
+
+    //estadias 
+    //salvando dados + códigos de referência
+    FILE *fEstadias = fopen("estadias.bin", "wb");
+    if (fEstadias == NULL) {
+        cout << "Erro ao criar estadias.bin" << endl;
+        return;
+    }
+
+    //grava a quantidade total de estadias
+    fwrite(&numEstadias, sizeof(int), 1, fEstadias);
+
+    //loop para salvar cada estadia
+    for (int i = 0; i < numEstadias; i++) {
+        //pega os dados básicos da estadia
+        int codEstadia = estadias[i].getCodigoEstadia();
+        int dEnt = estadias[i].getdiaDtaEntrada();
+        int mEnt = estadias[i].getmesDtaEntrada();
+        int aEnt = estadias[i].getanoDtaEntrada();
+        int dSai = estadias[i].getdiaDtaSaida();
+        int mSai = estadias[i].getmesDtaSaida();
+        int aSai = estadias[i].getanoDtaSaida();
+        int dias = estadias[i].getNumDiarias();
+        
+        //pega os codigos para salvar como referência
+        //usa os getters da própria estadia que acessam os ponteiros
+        int codigoClienteAssoc = estadias[i].getCodigoCliente();
+        int numeroQuartoAssoc = estadias[i].getNumQuarto();
+
+        //escreve no arquivo binário sequencialmente
+        fwrite(&codEstadia, sizeof(int), 1, fEstadias);
+        
+        fwrite(&dEnt, sizeof(int), 1, fEstadias);
+        fwrite(&mEnt, sizeof(int), 1, fEstadias);
+        fwrite(&aEnt, sizeof(int), 1, fEstadias);
+        
+        fwrite(&dSai, sizeof(int), 1, fEstadias);
+        fwrite(&mSai, sizeof(int), 1, fEstadias);
+        fwrite(&aSai, sizeof(int), 1, fEstadias);
+        
+        fwrite(&dias, sizeof(int), 1, fEstadias);
+        
+        //aqui salvamos as chaves para reconexão
+        fwrite(&codigoClienteAssoc, sizeof(int), 1, fEstadias);
+        fwrite(&numeroQuartoAssoc, sizeof(int), 1, fEstadias);
+    }
+    fclose(fEstadias);
+
+    cout << "\n[OK] Backup realizado com sucesso!" << endl;
+}
+
+//restaura dados
+//lendo códigos e buscando ponteiros
+void restauraDados(Cliente **clientesPtr, int &numClientes, int &capClientes,
+                    Funcionario **funcionariosPtr, int &numFuncionarios, int &capFuncionarios,
+                    Quarto **quartosPtr, int &numQuartos, int &capQuartos,
+                    Estadia **estadiasPtr, int &numEstadias, int &capEstadias) {
+
+    //limpeza de memoria
+    //limpa os ponteiros e zera contadores
+    free(*clientesPtr); *clientesPtr = NULL; numClientes = 0; capClientes = 0;
+    free(*funcionariosPtr); *funcionariosPtr = NULL; numFuncionarios = 0; capFuncionarios = 0;
+    free(*quartosPtr); *quartosPtr = NULL; numQuartos = 0; capQuartos = 0;
+    free(*estadiasPtr); *estadiasPtr = NULL; numEstadias = 0; capEstadias = 0;
+
+    int tempNum;
+
+    //restaura clientes
+    FILE *fClientes = fopen("clientes.bin", "rb");
+    if (fClientes) {
+        fread(&tempNum, sizeof(int), 1, fClientes);
+        numClientes = tempNum;
+        capClientes = (numClientes > 0) ? numClientes : 5;
+        *clientesPtr = (Cliente *)calloc(capClientes, sizeof(Cliente));
+        if (numClientes > 0) fread(*clientesPtr, sizeof(Cliente), numClientes, fClientes);
+        fclose(fClientes);
+    }
+
+    //restaura funcionários
+    FILE *fFuncs = fopen("funcionarios.bin", "rb");
+    if (fFuncs) {
+        fread(&tempNum, sizeof(int), 1, fFuncs);
+        numFuncionarios = tempNum;
+        capFuncionarios = (numFuncionarios > 0) ? numFuncionarios : 5;
+        *funcionariosPtr = (Funcionario *)calloc(capFuncionarios, sizeof(Funcionario));
+        if (numFuncionarios > 0) fread(*funcionariosPtr, sizeof(Funcionario), numFuncionarios, fFuncs);
+        fclose(fFuncs);
+    }
+
+    //restaura quartos
+    FILE *fQuartos = fopen("quartos.bin", "rb");
+    if (fQuartos) {
+        fread(&tempNum, sizeof(int), 1, fQuartos);
+        numQuartos = tempNum;
+        capQuartos = (numQuartos > 0) ? numQuartos : 5;
+        *quartosPtr = (Quarto *)calloc(capQuartos, sizeof(Quarto));
+        if (numQuartos > 0) fread(*quartosPtr, sizeof(Quarto), numQuartos, fQuartos);
+        fclose(fQuartos);
+    }
+
+    //restaura estadias
+    FILE *fEstadias = fopen("estadias.bin", "rb");
+    if (fEstadias) {
+        fread(&tempNum, sizeof(int), 1, fEstadias); //le quantidade
+        numEstadias = tempNum;
+        capEstadias = (numEstadias > 0) ? numEstadias : 5;
+        
+        *estadiasPtr = (Estadia *)calloc(capEstadias, sizeof(Estadia));
+
+        //loop para ler e reconstruir cada estadia
+        for (int i = 0; i < numEstadias; i++) {
+            int codEstadia, dEnt, mEnt, aEnt, dSai, mSai, aSai, dias;
+            int codigoClienteLido, numeroQuartoLido; //variáveis para armazenar o que vem do arquivo
+
+            //leitura na mesma ordem da gravação
+            fread(&codEstadia, sizeof(int), 1, fEstadias);
+            
+            fread(&dEnt, sizeof(int), 1, fEstadias);
+            fread(&mEnt, sizeof(int), 1, fEstadias);
+            fread(&aEnt, sizeof(int), 1, fEstadias);
+            
+            fread(&dSai, sizeof(int), 1, fEstadias);
+            fread(&mSai, sizeof(int), 1, fEstadias);
+            fread(&aSai, sizeof(int), 1, fEstadias);
+            
+            fread(&dias, sizeof(int), 1, fEstadias);
+            
+            //le os códigos de referência
+            fread(&codigoClienteLido, sizeof(int), 1, fEstadias);
+            fread(&numeroQuartoLido, sizeof(int), 1, fEstadias);
+
+            //configura o objeto estadia
+            Estadia *e = &(*estadiasPtr)[i];
+            e->setcodigoEstadia(codEstadia);
+            e->setdataEntrada(dEnt, mEnt, aEnt);
+            e->setdataSaida(dSai, mSai, aSai);
+            e->setnumDiarias(dias);
+
+            //reconecta os ponteiros usando os codigos lidos
+            //usa o 'codigoClienteLido' para achar o ponteiro real do cliente na memória
+            Cliente *c = encontraClientePorCodigo(*clientesPtr, numClientes, codigoClienteLido);
+            if (c != NULL) {
+                e->setCliente(c);
+            } else {
+                cout << "AVISO: Cliente Codigo " << codigoClienteLido << " nao encontrado durante restauracao." << endl;
+            }
+
+            // Usa o 'numeroQuartoLido' para achar o ponteiro real do Quarto na memória
+            Quarto *q = encontraQuartoPorNumero(*quartosPtr, numQuartos, numeroQuartoLido);
+            if (q != NULL) {
+                e->setQuarto(q);
+            } else {
+                cout << "AVISO: Quarto Numero " << numeroQuartoLido << " nao encontrado durante restauracao." << endl;
+            }
+        }
+        fclose(fEstadias);
+    } else {
+        cout << "Arquivo estadias.bin nao encontrado." << endl;
+    }
+
+    cout << "[OK] Restauracao concluida." << endl;
+    cout << "Dados carregados -> Clientes: " << numClientes 
+         << ", Funcionarios: " << numFuncionarios
+         << ", Quartos: " << numQuartos 
+         << ", Estadias: " << numEstadias << endl;
 }
 
 int main() {
@@ -1002,7 +1085,6 @@ int main() {
                 int opc2;
                 cout << "[1] Cadastrar cliente." << endl;
                 cout << "[2] Editar cliente." << endl;
-                cout << "[3] Remover cliente." << endl;
                 cout << ">> ";
                 cin >> opc2;
                 cout << "\n" << endl;
@@ -1030,10 +1112,10 @@ int main() {
                     cout << "Digite o endereco do cliente: ";
                     scanf(" %[^\n]", end);    
                     fflush(stdin);     
-                    cout << "Digite o telefone do cliente: ";
-                    cin >> telCliente;
-                    if (!validaTelefone(telCliente)){
-                        cout << "Telefone invalido. Cadastro nao realizado. \n" << endl;
+
+                    telCliente = inputTelefone();
+                    if (telCliente == -1){
+                        cout << "Cadastro nao realizado. \n" << endl;
                         break;
                     }
 
@@ -1050,15 +1132,6 @@ int main() {
                     editaCliente(clientes, numClientes, codClienteEditar);
                     break;
                 }
-                else {
-                    // Remover cliente
-                    int codClienteRemover;
-                    cout << "Digite o codigo do cliente a ser removido: ";
-                    cin >> codClienteRemover;
-                    deletaCliente(clientes, numClientes, codClienteRemover);
-                    break;
-                }
-                break;
             }
 
             case 2: {
@@ -1066,7 +1139,6 @@ int main() {
                 int opcFunc;
                 cout << "[1] Cadastrar funcionario." << endl;
                 cout << "[2] Editar funcionario." << endl;
-                cout << "[3] Remover funcionario." << endl;
                 cout << ">> ";
                 cin >> opcFunc;
                 cout << "\n" << endl;
@@ -1094,12 +1166,13 @@ int main() {
                     cout << "Digite o cargo do funcionario: ";
                     scanf(" %[^\n]", cargo);
                     fflush(stdin);
-                    cout << "Digite o telefone do funcionario: ";
-                    cin >> telFunc;
-                    if (!validaTelefone(telFunc)){
-                        cout << "Telefone invalido. Cadastro nao realizado. \n" << endl;
+
+                    telFunc = inputTelefone();
+                    if (telFunc == -1){
+                        cout << "Cadastro nao realizado. \n" << endl;
                         break;
                     }
+
                     cout << "Digite o salario do funcionario: ";
                     cin >> salario;
                     if (salario <= 0) {
@@ -1120,15 +1193,6 @@ int main() {
                     editaFuncionario(funcionarios, numFuncionarios, codFuncEditar);
                     break;
                 }
-                else {
-                    // Remover funcionário
-                    int codFuncRemover;
-                    cout << "Digite o codigo do funcionario a ser removido: ";
-                    cin >> codFuncRemover;
-                    deletaFuncionario(funcionarios, numFuncionarios, codFuncRemover);
-                    break;
-                }
-                break;
             }
 
             case 3: {
@@ -1200,13 +1264,13 @@ int main() {
             }
 
             case 8:
-                // Backup de dados do sistema
-                BackupdeDados(clientes, numClientes, funcionarios, numFuncionarios, quartos, numQuartos, estadias, numEstadias);
+                //backup dos dados
+                fazerBackup(clientes, numClientes, funcionarios, numFuncionarios, quartos, numQuartos, estadias, numEstadias);
                 break;
 
             case 9:
-                //Restaura dados do sistema
-                RestaurarDados(clientes, numClientes, funcionarios, numFuncionarios, quartos, numQuartos, estadias, numEstadias);
+                //restaura dados do backup
+                restauraDados(&clientes, numClientes, capClientes, &funcionarios, numFuncionarios, capFuncionarios, &quartos, numQuartos, capQuartos, &estadias, numEstadias, capEstadias);
                 break;
 
             default:
