@@ -66,29 +66,14 @@ class Cliente{
         }
 
         // Cadastra um cliente após verificar se o código já existe
-        void cadastraCliente(Cliente *cliente, int numDeClientes, int codCliente,
-                             char nomeCliente[99], char end[99], long long int telCliente){
-
-            if (codigoClienteJaExiste(codCliente, cliente, numDeClientes)){
-                cout << "Codigo de cliente ja existe. Cadastro nao realizado. \n" << endl;
-                return;
-            }
-
-
-            else {
-                for (int i = 0; i < numDeClientes; i++){
-                    if (strcmp(cliente[i].getNomeCliente(), nomeCliente) == 0){
-                        cout << "Nome de cliente ja existe. Cadastro nao realizado. \n" << endl;
-                        return;
-                    }
-                }
-                setCodigoCliente(codCliente);
-                setNomeCliente(nomeCliente);
-                setEndereco(end);
-                setTelCliente(telCliente);
-                cout << "Cliente cadastrado com sucesso! \n" << endl;
-                return;
-            }
+        void cadastraCliente(int codCliente, char nomeCliente[99], char end[99], long long int telCliente){
+    
+            setCodigoCliente(codCliente);
+            setNomeCliente(nomeCliente);
+            setEndereco(end);
+            setTelCliente(telCliente);
+            cout << "Cliente cadastrado com sucesso! \n" << endl;
+            return;
         }
 };
 
@@ -156,30 +141,54 @@ class Funcionario{
         }
 
         // Cadastra um funcionário caso o código não esteja repetido
-        void cadastraFunc(Funcionario *funcionarios, int numFuncionarios, int codFunc, 
-                          char nomeFunc[99], char cargo[30], long long int telFunc, float salario){
+        void cadastraFunc(int codFunc, char nomeFunc[99], char cargo[30], long long int telFunc, float salario){
 
-            if (codigoFuncJaExiste(codFunc, funcionarios, numFuncionarios)){
-                cout << "Codigo de funcionario ja existe. Cadastro nao realizado. \n" << endl;
-                return;
-            }
-            else{
-                for (int i = 0; i < numFuncionarios; i++){
-                    if (strcmp(funcionarios[i].getNomeFunc(),nomeFunc) == 0){
-                        cout << "Nome de funcionario ja existe. Cadastro nao realizado. \n" << endl;
-                        return;
-                    }
-                }
                 setCodigoFunc(codFunc);
                 setNomeFunc(nomeFunc);
                 setCargo(cargo);
                 setTelFunc(telFunc);
                 setSalario(salario);
                 cout << "Funcionario cadastrado com sucesso! \n" << endl;
-                return;
-            }            
-        }
+                return;          
+    }
 };
+
+// Verifica se o código já existe no vetor de clientes
+bool codigoClienteJaExiste(int code, Cliente *clientes, int numClientes){
+    for (int i = 0; i < numClientes; i++){
+        if (clientes[i].getCodigoCliente() == code)
+            return true;
+    }
+return false;
+}
+
+// Verifica se já existe um funcionário com o mesmo código
+bool codigoFuncJaExiste(int code, Funcionario *funcionarios, int numFuncionarios){
+    for (int i = 0; i < numFuncionarios; i++){
+        if (funcionarios[i].getCodigoFunc() == code){
+            return true;
+        }
+    }
+    return false;
+}
+
+bool verificaNomeCliente(Cliente *cliente, int numCliente, char nome[99]){
+    for (int i = 0; i < numCliente; i++){
+        if (strcmp(cliente[i].getNomeCliente(), nome) == 0){
+            return true;
+        }
+    }
+    return false;
+}
+
+bool verificaNomeFunc(Funcionario *func, int numFuncs, char nome[99]){
+    for (int i = 0; i < numFuncs; i++){
+        if (strcmp(func[i].getNomeFunc(), nome) == 0){
+            return true;
+        }
+    }
+    return false;
+}
 
 bool validaTelefone(long long int tel){
     //contador de digitos para o telefone
@@ -212,7 +221,7 @@ long long int inputTelefone(){
             if (input[i] < '0' || input[i] > '9'){
                 throw invalid_argument("Telefone invalido. Deve conter apenas numeros.");
             }
-            
+
             //converte o char para long long int
             //usa tabela ASCII para converter
             tel = tel * 10 + (input[i] - '0');
@@ -259,6 +268,10 @@ void editaFuncionario(Funcionario *func, int numFuncs, int codigoFunc){
                     cout << "Digite o novo nome: ";
                     scanf(" %[^\n]", novoNome);
                     fflush(stdin);
+                    if (verificaNomeFunc(func, numFuncs, novoNome) == true){
+                        cout << "Nome ja cadastrado! Cadastro nao realizado. \n" << endl;
+                        return;
+                    }
                     func[i].setNomeFunc(novoNome);
                     cout << "Nome atualizado com sucesso! \n" << endl;
                     break;
@@ -330,6 +343,10 @@ void editaCliente(Cliente *cliente, int numClientes, int codigoCliente){
                     cout << "Digite o novo nome: ";
                     scanf(" %[^\n]", novoNome);
                     fflush(stdin);
+                        if (verificaNomeCliente(cliente, numClientes, novoNome) == true){
+                        cout << "Nome ja cadastrado! Cadastro nao realizado. \n" << endl;
+                        return;
+                    }
                     cliente[i].setNomeCliente(novoNome);
                     cout << "Nome atualizado com sucesso! \n" << endl;
                     break;
@@ -750,9 +767,11 @@ void baixaEstadia(Estadia *estadias, int &numEstadias, Quarto *quartos, int numQ
             float valorTotal = estadias[i].getNumDiarias() * valorDiaria;
             cout << "Valor total da estadia: R$ " << valorTotal << endl;
 
-            int numQuarto = estadias[i].getNumQuarto();
-            for (int j = 0; j < numQuarto; j++){
-                if (estadias[j].getNumQuarto() == numQuarto){
+            int numQuartoParaLiberar = estadias[i].getNumQuarto();
+
+            //percorre a quantidade de quartos no vetor
+            for (int j = 0; j < numQuartos; j++){
+                if (estadias[j].getNumQuarto() == numQuartoParaLiberar){
                     // Libera o quarto associado à estadia
                     quartos[j].setStatus(false);
                     quartos[j].setCodigoCliente(0); // Remove a associação do cliente
@@ -1102,13 +1121,23 @@ int main() {
                     char nomeCliente[99], end[99];
                     cout << "Digite o codigo do cliente: ";
                     cin >> codCliente;
+                    if (codigoClienteJaExiste(codCliente, clientes, numClientes) == true){
+                        cout << "Codigo de cliente ja cadastrado! Cadastro nao realizado. \n" << endl;
+                        break;
+                    }
                     if (codCliente <= 0){
                         cout << "Codigo invalido. Cadastro nao realizado. \n" << endl;
                         break;
                     }
+
                     cout << "Digite o nome do cliente: ";
                     scanf(" %[^\n]", nomeCliente);
                     fflush(stdin);
+                    if (verificaNomeCliente(clientes, numClientes, nomeCliente) == true){
+                        cout << "Nome ja cadastrado! Cadastro nao realizado. \n" << endl;
+                        break;
+                    }
+                    
                     cout << "Digite o endereco do cliente: ";
                     scanf(" %[^\n]", end);    
                     fflush(stdin);     
@@ -1120,7 +1149,7 @@ int main() {
                     }
 
                     Cliente novoCliente;
-                    novoCliente.cadastraCliente(clientes, numClientes, codCliente, nomeCliente, end, telCliente);
+                    novoCliente.cadastraCliente(codCliente, nomeCliente, end, telCliente);
                     novoCliente.adicionaCliente(&clientes, numClientes, capClientes, novoCliente);
                     break;
                 }
@@ -1156,13 +1185,22 @@ int main() {
                     float salario;
                     cout << "Digite o codigo do funcionario: ";
                     cin >> codFunc;
+                    if (codigoFuncJaExiste(codFunc, funcionarios, numFuncionarios) == true){
+                        cout << "Codigo de funcionario ja existe! Cadastro nao realizado. \n" << endl;
+                        break;
+                    }
                     if (codFunc <= 0){
                         cout << "Codigo invalido. Cadastro nao realizado. \n" << endl;
                         break;
                     }
+                    
                     cout << "Digite o nome do funcionario: ";
                     scanf(" %[^\n]", nomeFunc);
                     fflush(stdin);
+                    if (verificaNomeFunc(funcionarios, numFuncionarios, nomeFunc) == true){
+                        cout << "Nome ja cadastrado! Cadastro nao realizado. \n" << endl;
+                        break;
+                    }
                     cout << "Digite o cargo do funcionario: ";
                     scanf(" %[^\n]", cargo);
                     fflush(stdin);
@@ -1181,7 +1219,7 @@ int main() {
                     }
 
                     Funcionario novoFunc;
-                    novoFunc.cadastraFunc(funcionarios, numFuncionarios, codFunc, nomeFunc, cargo, telFunc, salario);
+                    novoFunc.cadastraFunc(codFunc, nomeFunc, cargo, telFunc, salario);
                     novoFunc.adicionaFuncionario(&funcionarios, numFuncionarios, capFuncionarios, novoFunc);
                     break;
                 }
@@ -1273,8 +1311,14 @@ int main() {
                 restauraDados(&clientes, numClientes, capClientes, &funcionarios, numFuncionarios, capFuncionarios, &quartos, numQuartos, capQuartos, &estadias, numEstadias, capEstadias);
                 break;
 
+            //0 ou opcao errada: fecha o programa
             default:
-                // Qualquer opção inválida ou 0 sai do programa
+                //libera memoria antes de fechar
+                free(clientes);
+                free(funcionarios);
+                free(quartos);
+                free(estadias);
+
                 cout << "\nFechando programa....." << endl;
                 break;
         }
